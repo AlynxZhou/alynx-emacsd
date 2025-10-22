@@ -1,8 +1,5 @@
-alynx-emacs-config
-==================
-
-Alynx's Emacs configuration files.
-----------------------------------
+Alynx's Emacs configurations.
+=============================
 
 ![Screenshot](./screenshot.png)
 

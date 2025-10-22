@@ -17,7 +17,9 @@ $ mv ~/.emacs.d ~/.emacs.d.backup
 Then clone it.
 
 ```shell
-$ git clone https://github.com/AlynxZhou/alynx-emacs-config.git ~/.emacs.d && cd $_
+$ git clone https://github.com/AlynxZhou/alynx-emacsd.git ~/.emacs.d.alynx
+$ ln -s ~/.emacs.d.alynx ~/.emacs.d
+$ cd ~/.emacs.d
 $ git submodule init && git submodule update --recursive
 ```
 

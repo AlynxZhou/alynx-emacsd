@@ -1889,7 +1889,7 @@ point reaches the beginning or end of the buffer, stop there."
 ;; to let it find `compile_commands.json` under `build/`.
 (use-package lsp-bridge
   ;; Disable on macOS to prevent crash.
-  :disbled (alynx/macos-p)
+  :disabled (alynx/macos-p)
   ;; This is not in MELPA and installed as submodules.
   :load-path "site-lisp/lsp-bridge/"
   :defer t

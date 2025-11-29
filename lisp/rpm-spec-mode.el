@@ -1,4 +1,4 @@
-;;; rpm-spec-mode.el --- RPM spec file editing commands for Emacs/XEmacs
+;;; rpm-spec-mode.el --- RPM spec file editing commands for Emacs/XEmacs  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 1997-2015 Stig Bjørlykke, <stig@bjorlykke.org>
 

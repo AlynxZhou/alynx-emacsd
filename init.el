@@ -1260,7 +1260,17 @@ point reaches the beginning or end of the buffer, stop there."
 ;; See <https://src.fedoraproject.org/rpms/emacs-rpm-spec-mode/blob/rawhide/f/fix-define-obsolete-variable-alias.patch>.
 (use-package rpm-spec-mode
   ;; Don't ensure it, the MELPA one is old.
-  :mode (("\\.spec\\'" . rpm-spec-mode)))
+  :mode (("\\.spec\\'" . rpm-spec-mode))
+  ;; This mode disables many other modes, but I need them.
+  :hook ((rpm-spec-mode . (lambda () (progn (display-line-numbers-mode 1)
+                                            (whole-line-or-region-local-mode 1)
+                                            (display-fill-column-indicator-mode 1)
+                                            ;; (git-gutter-mode 1)
+                                            (diff-hl-mode 1)
+                                            (highlight-indent-guides-mode 1)
+                                            ;; (indent-bars-mode 1)
+                                            (hl-todo-mode 1)
+                                            (rainbow-mode 1))))))
 
 ;; Simple packages that have no dependencies.
 
@@ -1371,7 +1381,6 @@ point reaches the beginning or end of the buffer, stop there."
   ;; I only use this in `prog-mode`.
   :hook ((prog-mode . highlight-indent-guides-mode)
          (nxml-mode . highlight-indent-guides-mode)
-         (rpm-spec-mode . highlight-indent-guides-mode)
          ;; `yaml-mode` should be `prog-mode`, anyway.
          (yaml-ts-mode . highlight-indent-guides-mode))
   :custom
@@ -1407,14 +1416,12 @@ point reaches the beginning or end of the buffer, stop there."
   ;; ((server-after-make-frame . (lambda ()
   ;;                               (add-hook 'prog-mode-hook  'indent-bars-mode)
   ;;                               (add-hook 'nxml-mode-hook  'indent-bars-mode)
-  ;;                               (add-hook 'rpm-spec-mode-hook  'indent-bars-mode)
   ;;                               (add-hook 'yaml-ts-mode-hook  'indent-bars-mode))))
   ;; See <https://github.com/jdtsmith/indent-bars/issues/6>.
   ;;
   ;; Currently hard to use with both daemon and normal Emacs.
   ((prog-mode . indent-bars-mode)
    (nxml-mode . indent-bars-mode)
-   (rpm-spec-mode . indent-bars-mode)
    ;; `yaml-mode` should be `prog-mode`, anyway.
    (yaml-ts-mode . indent-bars-mode))
   :custom
@@ -1434,7 +1441,6 @@ point reaches the beginning or end of the buffer, stop there."
   :defer t
   :hook ((prog-mode . hl-todo-mode)
          (nxml-mode . hl-todo-mode)
-         (rpm-spec-mode . hl-todo-mode)
          (yaml-ts-mode . hl-todo-mode)))
 
 ;; `diff-hl` supports more VCS than `git-gutter` and `git-gutter-fringe`.
@@ -1551,7 +1557,6 @@ point reaches the beginning or end of the buffer, stop there."
   ;; :functions (rainbow-x-color-luminance)
   :hook ((prog-mode . rainbow-mode)
          (nxml-mode . rainbow-mode)
-         (rpm-spec-mode . rainbow-mode)
          (yaml-ts-mode . rainbow-mode))
   :config
   ;; FIXME: To make `flycheck` happy, before we fix `:functions`.

@@ -38,7 +38,15 @@ Install dependencies and language servers for `lsp-bridge` (`clangd` is included
 $ paru -S python-epc python-sexpdata
 ```
 
-For macOS, check [lsp-bridge's doc](https://github.com/manateelazycat/lsp-bridge?tab=readme-ov-file#installation) for installing dependencies with `pip`, you may need to create a `venv` for them.
+For macOS, you have to install them with `pip`, however Python disallows you to install them to system/user path, you have to use the only dependencies management tool that `lsp-bridge` supports, which is `uv`:
+
+```shell
+$ brew install uv
+$ cd ~/.emacs.d/site-lisp/lsp-bridge
+$ uv sync
+```
+
+And then you need to soft link `python-lsp-bridge` into `PATH` to make it run `lsp-bridge` with `uv`.
 
 Because [`flycheck` currently cannot run locally installed `standardx`](https://github.com/flycheck/flycheck/issues/1428), you may need to install `standardx` globally:
 

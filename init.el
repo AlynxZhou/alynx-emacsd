@@ -1892,6 +1892,16 @@ point reaches the beginning or end of the buffer, stop there."
 ;; Looks like that I need to alter JSON files under `langserver` to add
 ;; parameters to `clangd`, but I can also modify `~/.config/clangd/config.yaml`
 ;; to let it find `compile_commands.json` under `build/`.
+;;
+;; On macOS, according to Python's horrible dependencies management and venv,
+;; you have no way to install dependencies to where it could be loaded
+;; automatically, you have to use `uv`, which is the only dependencies
+;; management tool `lsp-bridge` supports. You must install `uv` via Homebrew
+;; first, and then run `uv sync` in `~/.emacs.d/site-lisp/lsp-bridge`, and soft
+;; link `python-lsp-bridge` into `PATH`.
+;;
+;; And you are still not able to use it because some dependencies may not
+;; support the latest Python. WHY???????
 (use-package lsp-bridge
   ;; Disable on macOS to prevent crash.
   :disabled (alynx/macos-p)

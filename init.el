@@ -145,14 +145,13 @@
 
 ;; A total resolution to set different indent offset to different modes, and
 ;; automatically guess it from file content.
+;;
+;; Those are the default settings, which means if major mode does not set those
+;; value, I'll use tabs and it's length should be 8 chars.
 
 ;; Making tab other length than 8 sounds like define PI to 3, if you don't want
-;; 8, you should also not use tabs, but use spaces.
+;; 8, you should also use spaces instead of tabs.
 (setq-default tab-width 8)
-
-;; This is the default value, which means if major mode does not set those
-;; value, I'll use tabs and it's length should be 8 chars.
-;;
 ;; `indent-tabs-mode` does not mean use tabs only, it means if the indent level
 ;; can be divided by `tab-width`, use tabs, and use spaces for the remaining.
 (setq-default indent-tabs-mode t)
@@ -314,8 +313,8 @@ If NUM is negative, indent offset will be nil."
 
 ;; Most projects saying that they are using 2 as `tab-width` actually means they
 ;; are using 2 as `indent-offset`. If you don't use spaces to indent,
-;; `tab-width` has no meaning for you.
-;; You should call `(indent-spaces 2)` for those projects.
+;; `tab-width` has no meaning for you. You should call `(indent-spaces 2)` for
+;; those projects.
 ;;
 ;; There are also other projects like GTK using 2 as `indent-offset`, and they
 ;; actually also assume `tab-width` is 8 and use tabs to indent. If you set
@@ -324,8 +323,7 @@ If NUM is negative, indent offset will be nil."
 ;;
 ;; So most of time you should not change `tab-width`, but maybe some crazy
 ;; projects use tabs for indent and they don't want `tab-width` to be 8, then
-;; call this via `M-x` manually.
-;; I personally think they should use 2 spaces instead.
+;; call this via `M-x` manually. I personally think they should use 2 spaces.
 (defun set-tab-width (num)
   "Mark this buffer to set tab width to NUM chars."
   (interactive `(,(read-number "Tab width (chars): " tab-width)))
@@ -352,8 +350,8 @@ If NUM is negative, indent offset will be nil."
 ;; 	7. 1 tab and 2 spaces prefix (5 indent levels).
 ;; 	(more...)
 ;;
-;; This function cannot handle such condition, that first you use tab to indent,
-;; and you have the following code:
+;; This function cannot handle condition that first you use tab to indent and
+;; you have the following code:
 ;;
 ;; ```c
 ;; int a(int b,
@@ -416,6 +414,7 @@ If NUM is negative, indent offset will be nil."
       ;; If a file uses tabs to indent, and we cannot get shortest spaces, this
       ;; file is likely to only use tabs, and the indent offset is tab width,
       ;; otherwise the shortest spaces length is indent offset.
+      ;;
       ;; If we don't find tabs, just assume this file does not use tabs, this is
       ;; not correct because we may just not have tabs in first 200 lines but
       ;; that is the best effort we can do. And then if we cannot get shortest
@@ -494,7 +493,8 @@ If NUM is negative, indent offset will be nil."
 ;; Atom style indent left or right.
 ;;
 ;; TODO: Currently they will indent by a `tab-width`, I want to modify them to
-;; use `indent-offset`.
+;; use `indent-offset`. But I find just re-indent with `TAB` is enough, I hardly
+;; need to manually tweak indent levels.
 ;;
 ;; See <https://dougie.io/emacs/indent-selection/>.
 (global-set-key (kbd "M-[") 'indent-rigidly-left-to-tab-stop)
@@ -588,18 +588,22 @@ point reaches the beginning or end of the buffer, stop there."
                 'smarter-move-beginning-of-line)
 
 ;; I found that vim style line insert commands helpful.
+;;
+;; `reindent-then-newline-and-indent` simulates what happens when press `ENTER`,
+;; and for `open-previous-line`, we need to indent the new line manually.
 (defun open-next-line ()
   "Insert an empty line below the current line."
   (interactive)
   (end-of-line)
-  (newline-and-indent))
+  (reindent-then-newline-and-indent))
 
 (defun open-previous-line ()
   "Insert an empty line above the current line."
   (interactive)
+  (beginning-of-line)
+  (reindent-then-newline-and-indent)
   (forward-line -1)
-  (end-of-line)
-  (newline-and-indent))
+  (indent-according-to-mode))
 
 (global-set-key (kbd "C-o") 'open-next-line)
 (global-set-key (kbd "C-S-o") 'open-previous-line)
@@ -714,6 +718,7 @@ point reaches the beginning or end of the buffer, stop there."
   (package-quickstart-refresh))
 ;; Make sure quick start cache is refreshed after operations in package menu,
 ;; for example upgrading packages.
+;;
 ;; See <https://www.manueluberti.eu/emacs/2021/03/08/package/>.
 (advice-add 'package-menu-execute :after-while #'package-quickstart-refresh)
 
@@ -738,8 +743,6 @@ point reaches the beginning or end of the buffer, stop there."
 ;;
 ;; See <https://github.com/jwiegley/use-package/issues/977>.
 ;;
-;; Let `use-package` always ensure packages so we don't need add `:ensure t`
-;; manually.
 ;; (setq use-package-always-ensure t)
 
 ;; Install and configure packages.
@@ -1165,10 +1168,20 @@ point reaches the beginning or end of the buffer, stop there."
   :mode (("\\.ts\\'" . typescript-ts-mode)))
 
 (use-package yaml-ts-mode
-  :mode (("\\.yml\\'" . yaml-ts-mode) ("\\.yaml\\'" . yaml-ts-mode)))
+  :mode (("\\.yml\\'" . yaml-ts-mode)
+         ("\\.yaml\\'" . yaml-ts-mode)))
 
 (use-package rust-ts-mode
   :mode (("\\.rs\\'" . rust-ts-mode)))
+
+(use-package lua-ts-mode
+  :mode (("\\.lua\\'" . lua-ts-mode)
+         ;; DaVinci Resolve's fuse scripts, it uses lua.
+         ("\\.fuse\\'" . lua-ts-mode)))
+
+(use-package cmake-ts-mode
+  :mode (("CMakeLists\\.txt\\'" . cmake-ts-mode)
+         ("\\.cmake\\'" . cmake-ts-mode)))
 
 ;; External modes and tools for different languages.
 
@@ -1203,11 +1216,12 @@ point reaches the beginning or end of the buffer, stop there."
 ;;          ("\\.json_schema\\'" . json-mode)
 ;;          ("\\.json\\'" . json-mode)))
 
-(use-package lua-mode
-  :ensure t
-  :mode (("\\.lua\\'" . lua-mode)
-         ;; DaVinci Resolve's fuse scripts, it uses lua.
-         ("\\.fuse\\'" . lua-mode)))
+;; I hardly write lua and `lua-ts-mode` should be enough.
+;; (use-package lua-mode
+;;   :ensure t
+;;   :mode (("\\.lua\\'" . lua-mode)
+;;          ;; DaVinci Resolve's fuse scripts, it uses lua.
+;;          ("\\.fuse\\'" . lua-mode)))
 
 (use-package markdown-mode
   :ensure t
@@ -1246,10 +1260,6 @@ point reaches the beginning or end of the buffer, stop there."
   :mode (("meson\\.build\\'" . meson-mode)
          ("meson\\.options\\'" . meson-mode)
          ("meson_options\\.txt\\'" . meson-mode)))
-
-(use-package cmake-ts-mode
-  :mode (("CMakeLists\\.txt\\'" . cmake-ts-mode)
-         ("\\.cmake\\'" . cmake-ts-mode)))
 
 ;; See <https://github.com/stigbjorlykke/rpm-spec-mode/issues/16>.
 ;;
@@ -1334,7 +1344,7 @@ point reaches the beginning or end of the buffer, stop there."
 (use-package olivetti
   :ensure t
   :bind (("C-c o" . olivetti-mode))
-  ;; Just disable eye-attracting things in olivetti mode.
+  ;; Just disable eye-attracting things in `olivetti-mode`.
   :hook ((olivetti-mode . (lambda () (if olivetti-mode
                                          (progn
                                            (display-line-numbers-mode -1)
@@ -1349,7 +1359,8 @@ point reaches the beginning or end of the buffer, stop there."
 ;; Atom-like move regine / current line up and down.
 (use-package move-text
   :ensure t
-  :bind (("M-p" . move-text-up) ("M-n" . move-text-down)))
+  :bind (("M-p" . move-text-up)
+         ("M-n" . move-text-down)))
 
 ;; If there is no region, behave like current line is current region like Atom.
 ;;

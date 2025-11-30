@@ -1772,6 +1772,8 @@ point reaches the beginning or end of the buffer, stop there."
   ;; Enable automatic preview at point in the `*Completions*` buffer. This is
   ;; relevant when you use the default completion UI.
   :hook ((completion-list-mode . consult-preview-at-point-mode))
+  ;; Make flycheck happy.
+  :functions (consult--customize-put)
   :config
   ;; Optionally tweak the register preview window.
   ;; This adds thin lines, sorting and hides the mode line of the window.

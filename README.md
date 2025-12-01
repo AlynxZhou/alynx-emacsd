@@ -46,6 +46,8 @@ $ cd ~/.emacs.d/site-lisp/lsp-bridge
 $ uv sync
 ```
 
+If some dependencies are failed to build with latest Python, you may use `uv sync --python 3.13` to request a specific Python version.
+
 And then you need to soft link `python-lsp-bridge` into `PATH` to make it run `lsp-bridge` with `uv`.
 
 Because [`flycheck` currently cannot run locally installed `standardx`](https://github.com/flycheck/flycheck/issues/1428), you may need to install `standardx` globally:
@@ -135,10 +137,6 @@ Then you can create a `emacs` script with following content to run Emacs from sh
 ```bash
 #!/bin/bash
 
-if [[ -f "${HOME}/.emacs.d/.local/venv-lsp-bridge/bin/activate" ]]; then
-	source "${HOME}/.emacs.d/.local/venv-lsp-bridge/bin/activate"
-fi
-
 /Applications/Emacs.app/Contents/MacOS/Emacs "${@}"
 ```
 
@@ -146,10 +144,6 @@ And you can create a `emacsclient` script with following content to run Emacs cl
 
 ```bash
 #!/bin/bash
-
-if [[ -f "${HOME}/.emacs.d/.local/venv-lsp-bridge/bin/activate" ]]; then
-	source "${HOME}/.emacs.d/.local/venv-lsp-bridge/bin/activate"
-fi
 
 /Applications/Emacs.app/Contents/MacOS/bin/emacsclient "${@}"
 ```

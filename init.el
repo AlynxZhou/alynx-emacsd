@@ -1914,10 +1914,11 @@ point reaches the beginning or end of the buffer, stop there."
 ;; link `python-lsp-bridge` into `PATH`.
 ;;
 ;; And you are still not able to use it because some dependencies may not
-;; support the latest Python. WHY???????
+;; support the latest Python. You may use `uv sync --python 3.13` to request a
+;; working Python version.
 (use-package lsp-bridge
   ;; Disable on macOS to prevent crash.
-  :disabled (alynx/macos-p)
+  ;; :disabled (alynx/macos-p)
   ;; This is not in MELPA and installed as submodules.
   :load-path "site-lisp/lsp-bridge/"
   :defer t

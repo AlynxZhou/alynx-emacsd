@@ -908,6 +908,13 @@ point reaches the beginning or end of the buffer, stop there."
   ;; Yank to cursor, not where mouse clicked.
   (mouse-yank-at-point t))
 
+;; Disable mouse in terminal, I don't really require mouse and I always get a
+;; lot of garbage inputs when I am moving mouse in iTerm2.
+(use-package xt-mouse
+  :defer t
+  :config
+  (xterm-mouse-mode -1))
+
 ;; Disable menu bar, tool bar, scroll bar and cursor blink.
 
 (use-package menu-bar

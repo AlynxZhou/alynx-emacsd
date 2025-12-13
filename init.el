@@ -785,17 +785,17 @@ point reaches the beginning or end of the buffer, stop there."
   ;; add all needed settings here.
   :mode (("COMMIT_EDITMSG\\'" . (lambda ()
                                   (display-fill-column-indicator-mode 1)
-                                  (setq display-fill-column-indicator-column 72)
+                                  (setq display-fill-column-indicator-column (+ 1 72))
                                   (setq show-trailing-whitespace t)))
-         ;; It's a little bit strange that SUSE use 67 in changes files.
+         ;; It's a little bit strange that SUSE use 66 in changes files.
          ("\\.changes\\'" . (lambda ()
                               (display-fill-column-indicator-mode 1)
-                              (setq display-fill-column-indicator-column 67)
+                              (setq display-fill-column-indicator-column (+ 1 66))
                               (setq show-trailing-whitespace t)))
          ;; `osc` generate temp files for `vc`.
          ("\\.changes\\.vctmp\\." . (lambda ()
                                       (display-fill-column-indicator-mode 1)
-                                      (setq display-fill-column-indicator-column 67)
+                                      (setq display-fill-column-indicator-column (+ 1 66))
                                       (setq show-trailing-whitespace t))))
   ;; Vertico requires those.
   :config
@@ -1033,8 +1033,9 @@ point reaches the beginning or end of the buffer, stop there."
          (nxml-mode . display-fill-column-indicator-mode)
          (yaml-ts-mode . display-fill-column-indicator-mode))
   :custom
-  ;; Set column ruler at 80 columns.
-  (display-fill-column-indicator-column 80))
+  ;; Set column ruler at 80 columns. However Emacs displays it in the center, so
+  ;; actually we need to add 1 column.
+  (display-fill-column-indicator-column (+ 1 80)))
 
 (use-package paren
   :defer t

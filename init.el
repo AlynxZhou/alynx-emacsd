@@ -1650,8 +1650,9 @@ point reaches the beginning or end of the buffer, stop there."
                               "\\*Compile-Log\\*"
                               "Output\\*$"
                               "\\*Async Shell Command\\*"
-                              help-mode
-                              compilation-mode))
+                              ;; Compilation log deserves a big window.
+                              ;; compilation-mode
+                              help-mode))
   ;; Don't add extra segment because it does not follow my segments.
   (popper-mode-line ""))
 

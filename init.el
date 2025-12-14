@@ -59,7 +59,7 @@
 ;; as monospace, for example macOS, so explicitly set Monaco here for them to
 ;; solve this.
 ;;
-;; `fill-column-indicator` and `highlight-indent-guide` uses box-drawing
+;; `display-fill-column-indicator` and `highlight-indent-guide` uses box-drawing
 ;; characters to draw bars, but the default characters in Monaco is not so good,
 ;; it has padding before and after it. To fix this I used my patched Monaco
 ;; which merges Menlo's box-drawing characters into it.
@@ -137,6 +137,10 @@
 ;;
 ;; I have no idea on `PingFang SC`, so still use this way.
 (setq face-font-rescale-alist '(("PingFang SC" . 0.9)))
+;; There is also another solution that enlarge line spacing and line height, but
+;; it breaks box-drawing characters. If we are using stipple, this is OK, but
+;; currently there are also problems with stipple.
+;; (setq default-text-properties '(line-spacing 0.2 line-height 1.2))
 
 ;; Don't clean font-caches during GC.
 (setq inhibit-compacting-font-caches t)
@@ -1032,9 +1036,48 @@ point reaches the beginning or end of the buffer, stop there."
   :hook ((prog-mode . display-fill-column-indicator-mode)
          (nxml-mode . display-fill-column-indicator-mode)
          (yaml-ts-mode . display-fill-column-indicator-mode))
+  ;; Currently there are still some problems that preventing us from using
+  ;; stipple as fill column indicator:
+  ;; 	- If you scale text to some values of width, there is a Emacs bug that it
+  ;;	  will draw two bars when you only gives one.
+  ;; 	- It does not use a buffer-local face, so scaling text in one buffer will
+  ;; 	  affect another.
+  ;; 	- I don't know how to make the initial state correct.
+  ;; :functions (alynx/make-bar-stipple alynx/update-window-fill-column-indicator)
+  ;; :config
+  ;; (defun alynx/make-bar-stipple (left fill)
+  ;;   "Make stipple to draw bar for FILL and LEFT padding pixels."
+  ;;   (let* ((width (window-font-width))
+  ;;          (num-bytes (/ (+ width 7) 8))
+  ;;          (num-left-bits (floor (* width left)))
+  ;;          (num-fill-bits (floor (* width fill)))
+  ;;          (fill-bits (- (ash 1 num-fill-bits) 1))
+  ;;          ;; Remember lower bit is the left.
+  ;;          (bits (ash fill-bits num-left-bits))
+  ;;          (bytes '()))
+  ;;     ;; (message "width: %d, num-fill-bits: %d, num-left-bits: %d" width num-fill-bits num-left-bits)
+  ;;     (dotimes (i num-bytes)
+  ;;       (let* ((num-shift-bits (* i 8))
+  ;;              (left-bits (ash bits (- num-shift-bits)))
+  ;;              (byte (logand left-bits #xFF)))
+  ;;         ;; (message (format "%x" byte))
+  ;;         (push byte bytes)))
+  ;;     ;; (message (format "%S" bytes))
+  ;;     `(,width 1 ,(apply 'unibyte-string (reverse bytes)))))
+  ;; (defun alynx/update-window-fill-column-indicator ()
+  ;;   "Update fill-column-indicator on window change."
+  ;;   (if (display-graphic-p)
+  ;;       (progn
+  ;;         (set-face-attribute 'fill-column-indicator nil :stipple (alynx/make-bar-stipple 0.125 0.25))
+  ;;         ;; Hide the character in GUI while using stipple.
+  ;;         (setq display-fill-column-indicator-character ?\s))
+  ;;     (set-face-attribute 'fill-column-indicator nil :stipple nil)
+  ;;     (setq display-fill-column-indicator-character nil)))
+  ;; (add-hook 'emacs-startup-hook 'alynx/update-window-fill-column-indicator)
+  ;; (add-hook 'text-scale-mode-hook 'alynx/update-window-fill-column-indicator)
   :custom
-  ;; Set column ruler at 80 columns. However Emacs displays it in the center, so
-  ;; actually we need to add 1 column.
+  ;; Set column ruler at 80 columns. However Emacs displays it in given column,
+  ;; so actually we need to add 1 column.
   (display-fill-column-indicator-column (+ 1 80)))
 
 (use-package paren
@@ -1283,7 +1326,6 @@ point reaches the beginning or end of the buffer, stop there."
   :hook ((rpm-spec-mode . (lambda () (progn (display-line-numbers-mode 1)
                                             (whole-line-or-region-local-mode 1)
                                             (display-fill-column-indicator-mode 1)
-                                            ;; (git-gutter-mode 1)
                                             (diff-hl-mode 1)
                                             (highlight-indent-guides-mode 1)
                                             ;; (indent-bars-mode 1)
@@ -1357,11 +1399,9 @@ point reaches the beginning or end of the buffer, stop there."
                                          (progn
                                            (display-line-numbers-mode -1)
                                            (display-fill-column-indicator-mode -1)
-                                           ;; (git-gutter-mode -1)
                                            (diff-hl-mode -1))
                                        (display-line-numbers-mode 1)
                                        (display-fill-column-indicator-mode 1)
-                                       ;; (git-gutter-mode 1)
                                        (diff-hl-mode 1))))))
 
 ;; Atom-like move regine / current line up and down.
@@ -1416,38 +1456,24 @@ point reaches the beginning or end of the buffer, stop there."
   (highlight-indent-guides-bitmap-function
    'highlight-indent-guides--bitmap-line))
 
-;; Currently not working well with PGTK due to a bug. But this is a new thing,
-;; it uses stipple face properties and should be fast.
-;;
-;; See <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=64969>.
-;;
-;; The author says it does not support `indent-tabs-mode`, I feel depressed, why
-;; we cannot have a fast indent guide that supports tabs? Every editor has one,
-;; is it so hard???
-;;
-;; See <https://github.com/jdtsmith/indent-bars/commit/accb7d00d2dd86944909b81dc45391813106ca74>.
+;; Currently there are still a problem that preventing us from using indent-bars:
+;; If you scale text to some values of width, there is a Emacs bug that it will
+;; draw two bars when you only gives one.
 (use-package indent-bars
-  :load-path "site-lisp/indent-bars"
+  :ensure t
   :defer t
   :disabled t
   ;; I only use this in `prog-mode`.
-  :hook
-  ;; ((server-after-make-frame . (lambda ()
-  ;;                               (add-hook 'prog-mode-hook  'indent-bars-mode)
-  ;;                               (add-hook 'nxml-mode-hook  'indent-bars-mode)
-  ;;                               (add-hook 'yaml-ts-mode-hook  'indent-bars-mode))))
-  ;; See <https://github.com/jdtsmith/indent-bars/issues/6>.
-  ;;
-  ;; Currently hard to use with both daemon and normal Emacs.
-  ((prog-mode . indent-bars-mode)
-   (nxml-mode . indent-bars-mode)
-   ;; `yaml-mode` should be `prog-mode`, anyway.
-   (yaml-ts-mode . indent-bars-mode))
+  :hook ((prog-mode . indent-bars-mode)
+         (nxml-mode . indent-bars-mode)
+         ;; `yaml-mode` should be `prog-mode`, anyway.
+         (yaml-ts-mode . indent-bars-mode))
   :custom
   (indent-bars-pattern ".")
   ;; (indent-bars-color 'shadow)
-  (indent-bars-width-frac 0.2)
-  (indent-bars-pad-frac 0.1)
+  (indent-bars-width-frac 0.25)
+  (indent-bars-pad-frac 0.125)
+  (indent-bars-starting-column 0)
   (indent-bars-display-on-blank-lines t)
   (indent-bars-zigzag nil)
   (indent-bars-color-by-depth nil)

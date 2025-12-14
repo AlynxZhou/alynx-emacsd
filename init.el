@@ -12,6 +12,10 @@
 ;;
 ;; Those belong to no package and should be done during initialization.
 
+(defun alynx/macos-p ()
+  "Check whether current system is macOS."
+  (eq system-type 'darwin))
+
 ;; Show loading details after startup.
 (add-hook 'emacs-startup-hook
           (lambda ()
@@ -45,9 +49,16 @@
 ;; Backup dir which contains backup files and auto save lists.
 (make-directory (locate-user-emacs-file ".local/backup/") t)
 
-(defun alynx/macos-p ()
-  "Check whether current system is macOS."
-  (eq system-type 'darwin))
+;; On macOS we set PATH in shell profile, so if we are not starting Emacs from
+;; shell (for example from launchpad), it cannot get PATH correctly, but we need
+;; it to load `lsp-bridge`.
+(when (alynx/macos-p)
+  (add-to-list 'exec-path (expand-file-name "~/bin"))
+  (add-to-list 'exec-path (expand-file-name "/opt/homebrew/bin"))
+  (setenv "PATH" (format "%s:%s:%s"
+                         (expand-file-name "/opt/homebrew/bin")
+                         (expand-file-name "~/bin")
+                         (getenv "PATH"))))
 
 ;; Fonts.
 

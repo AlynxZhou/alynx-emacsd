@@ -50,7 +50,7 @@
 ;; Change titlebar label.
 ;;
 ;; I mostly run Emacs GUI locally, `system-name` is really useless.
-(setq-default frame-title-format "%b - GNU Emacs")
+(setq frame-title-format "%b - GNU Emacs")
 ;; Start every frame maximized.
 ;;
 ;; See <https://emacsredux.com/blog/2020/12/04/maximize-the-emacs-frame-on-startup/>.
@@ -75,6 +75,13 @@
                                 (child-frame-border-width . nil)
                                 (vertical-scroll-bars . nil)
                                 (horizontal-scroll-bars . nil)))
+(when (featurep 'ns)
+  ;; I don't know how to change titlebar text color, maybe it is easier to just
+  ;; hide icon and text while using transparent titlebar.
+  (setq ns-use-proxy-icon nil)
+  (setq frame-title-format nil)
+  (modify-all-frames-parameters '((ns-transparent-titlebar . t))))
+
 ;; Do not resize the frame at this early stage.
 (setq frame-inhibit-implied-resize t)
 ;; Resize frame in pixels, not chars (which is not supported in Wayland). Put

@@ -1047,6 +1047,7 @@ point reaches the beginning or end of the buffer, stop there."
   :hook ((prog-mode . display-fill-column-indicator-mode)
          (nxml-mode . display-fill-column-indicator-mode)
          (yaml-ts-mode . display-fill-column-indicator-mode))
+         (conf-unix-mode . display-fill-column-indicator-mode))
   ;; Currently there are still some problems that preventing us from using
   ;; stipple as fill column indicator:
   ;; 	- If you scale text to some values of width, there is a Emacs bug that it

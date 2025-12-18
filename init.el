@@ -1046,7 +1046,7 @@ point reaches the beginning or end of the buffer, stop there."
   ;; I only use this in `prog-mode`.
   :hook ((prog-mode . display-fill-column-indicator-mode)
          (nxml-mode . display-fill-column-indicator-mode)
-         (yaml-ts-mode . display-fill-column-indicator-mode))
+         (yaml-ts-mode . display-fill-column-indicator-mode)
          (conf-unix-mode . display-fill-column-indicator-mode))
   ;; Currently there are still some problems that preventing us from using
   ;; stipple as fill column indicator:

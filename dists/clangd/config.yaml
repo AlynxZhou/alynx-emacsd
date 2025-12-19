@@ -8,6 +8,6 @@ Diagnostics:
 CompileFlags:
   # That's where Meson generates `compile_commands.json`.
   CompilationDatabase: build/
-Compilation:
+Completion:
   # Prevent it from including headers.
   HeaderInsertion: Never

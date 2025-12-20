@@ -983,7 +983,9 @@ point reaches the beginning or end of the buffer, stop there."
 (use-package files
   :defer t
   :bind (("C-x M-f" . find-sibling-file)
-         ("C-c C-f" . find-file-other-window))
+         ("C-c C-f" . find-file-other-window)
+         ("C-c r" . revert-buffer)
+         ("<f5>" . revert-buffer))
   :custom
   (find-file-visit-truename t)
   (find-file-suppress-same-file-warnings nil)
@@ -1002,6 +1004,11 @@ point reaches the beginning or end of the buffer, stop there."
    `(("." . ,(locate-user-emacs-file ".local/backup/"))))
   (auto-save-file-name-transforms
    `((".*" ,(locate-user-emacs-file ".local/backup/") t))))
+
+(use-package compile
+  :defer t
+  :bind (("C-x c" . compile)
+         ("<f9>" . compile)))
 
 (use-package tramp-cache
   :defer t

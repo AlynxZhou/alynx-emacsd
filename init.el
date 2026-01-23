@@ -1010,7 +1010,11 @@ point reaches the beginning or end of the buffer, stop there."
 (use-package compile
   :defer t
   :bind (("C-x c" . compile)
-         ("<f9>" . compile)))
+         ("<f9>" . compile))
+  :custom
+  (compilation-scroll-output t)
+  (compilation-auto-jump-to-first-error t)
+  (compilation-max-output-line-length nil))
 
 (use-package tramp-cache
   :defer t

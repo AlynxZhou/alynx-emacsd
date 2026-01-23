@@ -843,6 +843,8 @@ point reaches the beginning or end of the buffer, stop there."
   (use-short-answers t)
   ;; Set cursor to underline.
   (cursor-type 'hbar)
+  (cursor-in-non-selected-windows nil)
+  (highlight-nonselected-windows nil)
   ;; Disable line spacing, it makes `highlight-indent-guides` wired.
   ;; (line-spacing nil)
   ;; FIXME: High CPU usage on scrolling.

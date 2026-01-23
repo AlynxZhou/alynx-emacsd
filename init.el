@@ -49,6 +49,11 @@
 ;; Backup dir which contains backup files and auto save lists.
 (make-directory (locate-user-emacs-file ".local/backup/") t)
 
+;; `make-variable-buffer-local` must be called at toplevel.
+;;
+;; In order to set it per-project in `.dir-locals.el`.
+(make-variable-buffer-local 'compile-command)
+
 ;; On macOS we set PATH in shell profile, so if we are not starting Emacs from
 ;; shell (for example from launchpad), it cannot get PATH correctly, but we need
 ;; it to load `lsp-bridge`.
@@ -1009,12 +1014,18 @@ point reaches the beginning or end of the buffer, stop there."
 
 (use-package compile
   :defer t
-  :bind (("C-x c" . compile)
-         ("<f9>" . compile))
   :custom
   (compilation-scroll-output t)
   (compilation-auto-jump-to-first-error t)
   (compilation-max-output-line-length nil))
+
+(use-package project
+  :defer t
+  ;; I hardly do single-file compiling.
+  :bind (("C-x c" . project-compile)
+         ("<f9>" . project-compile))
+  :custom
+  (project-list-file (locate-user-emacs-file ".local/projects.eld")))
 
 (use-package tramp-cache
   :defer t

@@ -517,8 +517,14 @@ If NUM is negative, indent offset will be nil."
 ;; need to manually tweak indent levels.
 ;;
 ;; See <https://dougie.io/emacs/indent-selection/>.
-(global-set-key (kbd "M-[") 'indent-rigidly-left-to-tab-stop)
-(global-set-key (kbd "M-]") 'indent-rigidly-right-to-tab-stop)
+;;
+;; NOTE: `M-[` happens to be the terminal escape prefix `\e[` (`Esc [`) so we
+;; cannot use it, otherwise escape sequences will be directly inserted into
+;; buffer because the prefix is handled as keybinding. For example, with iTerm2,
+;; if you focus out and focus in it, you'll see `OI` inserted into buffer,
+;; because they are `\e[O` and `\e[I`.
+;; (global-set-key (kbd "M-[") 'indent-rigidly-left-to-tab-stop)
+;; (global-set-key (kbd "M-]") 'indent-rigidly-right-to-tab-stop)
 
 ;; I use this in Atom, but by default `M-;` is used in Emacs, so I may use this
 ;; keybinding for others in future.
@@ -930,11 +936,9 @@ point reaches the beginning or end of the buffer, stop there."
   ;; Yank to cursor, not where mouse clicked.
   (mouse-yank-at-point t))
 
-;; Disable mouse in terminal, I don't really require mouse and I always get a
-;; lot of garbage inputs when I am moving mouse in iTerm2.
 (use-package xt-mouse
   :config
-  (xterm-mouse-mode -1))
+  (xterm-mouse-mode 1))
 
 ;; Disable menu bar, tool bar, scroll bar and cursor blink.
 

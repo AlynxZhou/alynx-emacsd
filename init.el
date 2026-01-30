@@ -933,7 +933,6 @@ point reaches the beginning or end of the buffer, stop there."
 ;; Disable mouse in terminal, I don't really require mouse and I always get a
 ;; lot of garbage inputs when I am moving mouse in iTerm2.
 (use-package xt-mouse
-  :defer t
   :config
   (xterm-mouse-mode -1))
 

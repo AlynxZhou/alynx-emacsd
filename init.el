@@ -1019,7 +1019,8 @@ point reaches the beginning or end of the buffer, stop there."
   :defer t
   :custom
   (compilation-scroll-output t)
-  (compilation-auto-jump-to-first-error t)
+  ;; Don't set that, very annoying.
+  ;; (compilation-auto-jump-to-first-error t)
   (compilation-max-output-line-length nil))
 
 (use-package project

@@ -1900,7 +1900,7 @@ point reaches the beginning or end of the buffer, stop there."
   :ensure t
   :defer t
   :hook ((prog-mode . flycheck-mode)
-         (nxml-mode . flycheck-mode)
+         ;; (nxml-mode . flycheck-mode)
          (yaml-ts-mode . flycheck-mode)
          (markdown-mode . flycheck-mode)
          (org-mode . flycheck-mode))

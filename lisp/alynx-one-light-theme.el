@@ -6,10 +6,15 @@
 ;; things I never use.
 ;;
 ;; To remind me what I did:
-;;   - Removed terminal colors, I use Emacs as a GUI app.
+;;   - Removed terminal colors, I use Emacs as a GUI app or with 256 color
+;;     terminal.
 ;;   - Removed helm/ivy colors, I use Vertico now.
 ;;   - Removed many packages that I don't use.
 ;;   - Removed prefix of colors, we use them in `let`.
+;;
+;; Ideas on choosing color:
+;;   - Don't set background color unless necessary, it could be noisy while
+;;     reading codes.
 
 ;;; Code:
 
@@ -133,7 +138,7 @@
    ;; Trailing whitespace.
    ;; This is different from the package called `whitespace`.
    ;; Setting underline is not OK, it blocks region, don't know why.
-   `(trailing-whitespace ((t (:background ,warning))))
+   `(trailing-whitespace ((t (:background ,guide))))
 
    ;; Compilation.
    `(compilation-face ((t (:foreground ,fg))))
@@ -143,12 +148,12 @@
    `(compilation-mode-line-fail ((t (:inherit (compilation-error) :weight bold))))
 
    ;; Isearch.
-   `(isearch ((t (:foreground ,bg :background ,cyan))))
+   `(isearch ((t (:foreground ,bg :background ,orange-1))))
    `(isearch-fail ((t (:foreground ,error :background unspecified))))
-   `(lazy-highlight ((t (:foreground ,cyan :background ,bg-1 :underline ,cyan))))
+   `(lazy-highlight ((t (:foreground ,orange-1 :background ,bg-1 :underline ,orange-1))))
 
    ;; Replace.
-   `(match ((t (:foreground ,bg :background ,blue))))
+   `(match ((t (:foreground ,bg :background ,orange-2))))
 
    ;; Consult.
    `(consult-line-number-prefix ((t (:inherit (line-number)))))
@@ -186,6 +191,16 @@
    `(diff-refine-removed ((t (:underline t))))
    `(diff-refine-added ((t (:underline t))))
    `(diff-refine-changed ((t (:underline t))))
+
+   ;; `smerge-mode`.
+   ;; The default styles are too noisy.
+   `(smerge-upper ((t (:background unspecified))))
+   `(smerge-lower ((t (:background unspecified))))
+   `(smerge-base ((t (:background unspecified))))
+   `(smerge-markers ((t (:background unspecified :underline t))))
+   `(smerge-refine-changed ((t (:background unspecified :underline t))))
+   `(smerge-refine-removed ((t (:background unspecified :underline t))))
+   `(smerge-refine-added ((t (:background unspecified :underline t))))
 
    ;; `diff-hl`.
    `(diff-hl-change ((t (:foreground ,change :background unspecified))))

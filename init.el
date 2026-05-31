@@ -1229,10 +1229,17 @@ point reaches the beginning or end of the buffer, stop there."
 ;; I prefer Linux coding style for C, not GNU.
 (use-package cc-vars
   :defer t
+  :config
+  ;; The linux style of Emacs does not really follow linux style, correct it.
+  ;;
+  ;; See <https://emacs-china.org/t/emacs/19319/7>.
+  ;;
+  ;; See <https://www.gnu.org/software/emacs/manual/html_mono/ccmode.html#index-c_002doffsets_002dalist-1>.
+  (c-add-style "alynx" '("linux" (c-offsets-alist (arglist-close . 0))))
   :custom
   (c-default-style '((java-mode . "java")
                      (awk-mode . "awk")
-                     (other . "linux"))))
+                     (other . "alynx"))))
 
 (use-package cc-mode
   :defer t

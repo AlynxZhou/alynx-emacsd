@@ -1761,6 +1761,11 @@ point reaches the beginning or end of the buffer, stop there."
 ;;
 ;; See <https://github.com/jwiegley/use-package/issues/976#issuecomment-1056017784>.
 
+;; Dependency of `vertico-posframe` and `flycheck-posframe`.
+;; (use-package posframe
+;;   :ensure t
+;;   :defer t)
+
 ;; Vertico and Consult need this to behave like `ivy--regex-plus`.
 (use-package orderless
   :ensure t
@@ -1796,6 +1801,12 @@ point reaches the beginning or end of the buffer, stop there."
   :custom
   (vertico-resize t)
   (vertico-cycle t))
+
+;; Fancy, but not so useful, for example, it blocks search results.
+;; (use-package vertico-posframe
+;;   :ensure t
+;;   :config
+;;   (vertico-posframe-mode 1))
 
 (use-package consult
   :ensure t
@@ -1898,11 +1909,6 @@ point reaches the beginning or end of the buffer, stop there."
 ;;   (treemacs-persist-file (locate-user-emacs-file ".local/treemacs-persist"))
 ;;   (treemacs-last-error-persist-file
 ;;    (locate-user-emacs-file ".local/treemacs-persist-at-last-error")))
-
-;; Dependency of `flycheck-posframe` and `lsp-bridge`.
-;; (use-package posframe
-;;   :ensure t
-;;   :defer t)
 
 (use-package flycheck
   :ensure t

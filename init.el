@@ -1754,6 +1754,7 @@ point reaches the beginning or end of the buffer, stop there."
                (if (alynx/macos-p)
                    "/opt/homebrew/share/emacs/site-lisp/mu/mu4e"
                  "/usr/share/emacs/site-lisp/mu4e"))
+  :defer 1
   :custom
   (mail-user-agent 'mu4e)
   (mu4e-maildir "~/Mail/gmail")

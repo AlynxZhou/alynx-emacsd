@@ -2050,4 +2050,23 @@ point reaches the beginning or end of the buffer, stop there."
   (acm-enable-doc nil)
   (acm-enable-tabnine nil))
 
+;; `gptel` uses this, and we need to redirect its files.
+(use-package transient
+  :ensure t
+  :defer t
+  :custom
+  (transient-history-file (locate-user-emacs-file ".local/transient/history.el"))
+  (transient-levels-file (locate-user-emacs-file ".local/transient/levels.el"))
+  (transient-values-file (locate-user-emacs-file ".local/transient/values.el")))
+
+;; If you want to use self-host LLMs with Ollama, see `unused.el`.
+(use-package gptel
+  :ensure t
+  :defer 1
+  :custom
+  (gptel-backend (gptel-make-deepseek "DeepSeek"
+                   :stream t
+                   :key 'gptel-api-key-from-auth-source
+                   :models '(deepseek-v4-flash))))
+
 ;;; init.el ends here.

@@ -140,6 +140,32 @@
   :defer 1
   :commands lsp-treemacs-errors-list)
 
+;; Generate model with parameters via a `Modelfile`:
+;;
+;; ```
+;; FROM hf.co/HauhauCS/Qwen3.5-27B-Uncensored-HauhauCS-Aggressive:Q4_K_M
+;; PARAMETER num_ctx 65536
+;; PARAMETER num_predict 8192
+;; ```
+;;
+;; and run `ollama create qwen3527q4 -f Modelfile`.
+(use-package gptel
+  :ensure t
+  :defer 1
+  :custom
+  (gptel-max-tokens 8192)
+  (gptel-backend (gptel-make-ollama "Ollama"
+                   :host "localhost:11434"
+                   :stream t
+                   :models '(qwen3527q4:latest)
+                   :request-params '(:options
+                                     (:num_ctx 32768             ; 窗口要明显大于 提示词+生成长度
+                                               :num_predict 4096          ; 单次生成别太长，一章的量足够
+                                               :temperature 0.8           ; 太低温容易复读，0.7~0.9 比较适合创作
+                                               :top_p 0.9
+                                               :repeat_penalty 1.2        ; 加重对重复内容的惩罚
+                                               :repeat_last_n 32768)))))
+
 ;; `format-mode-line` processes mode line interestingly:
 ;;
 ;;   1. String will inhert `mode-line` / `mode-line-inactive` face initially.

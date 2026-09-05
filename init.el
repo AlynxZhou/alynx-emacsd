@@ -635,6 +635,8 @@ point reaches the beginning or end of the buffer, stop there."
   (indent-according-to-mode))
 
 (global-set-key (kbd "C-o") 'open-next-line)
+;; `C-S-o` does not work well in terminal.
+(global-set-key (kbd "M-o") 'open-previous-line)
 (global-set-key (kbd "C-S-o") 'open-previous-line)
 
 ;; Find sibling file, but do not select it. We need this because we want to show

@@ -2076,6 +2076,6 @@ point reaches the beginning or end of the buffer, stop there."
   (gptel-backend (gptel-make-deepseek "DeepSeek"
                    :stream t
                    :key 'gptel-api-key-from-auth-source
-                   :models '(deepseek-v4-flash))))
+                   :models '(deepseek-flash))))
 
 ;;; init.el ends here.

@@ -129,6 +129,10 @@
    `(flycheck-warning ((t (:underline (:color ,warning)))))
    `(flycheck-info ((t (:underline (:color ,info)))))
 
+   ;; Keycast.
+   `(keycast-key ((t (:inherit (mode-line-emphasis) :foreground ,cyan))))
+   `(keycast-command ((t (:inherit (mode-line)))))
+
    ;; `lsp-bridge`.
    `(lsp-bridge-diagnostics-error-face ((t (:underline (:color ,error)))))
    `(lsp-bridge-diagnostics-warning-face ((t (:underline (:color ,warning)))))

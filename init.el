@@ -1773,6 +1773,12 @@ point reaches the beginning or end of the buffer, stop there."
   (user-mail-address "alynx.zhou@gmail.com")
   (user-full-name "Alynx Zhou"))
 
+(use-package keycast
+  :ensure t
+  :config
+  ;; I have custom mode-line, `keycast-mode-line-mode` won't work.
+  (keycast-invisible-mode 1))
+
 ;; Complex packages that have dependencies.
 ;;
 ;; Don't change the sequence, because the latter needs to obey the former's

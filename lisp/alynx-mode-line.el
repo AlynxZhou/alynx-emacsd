@@ -667,6 +667,16 @@ Checkers checked, in order: `flycheck', `flymake'."
    ((bound-and-true-p flymake-mode)
     (alynx-mode-line--segment-checker-flymake))))
 
+(declare-function keycast-format "keycast" (format))
+
+(defun alynx-mode-line--segment-keybinging ()
+  "Display keybindings via `keycast-format'."
+  (when (bound-and-true-p keycast-invisible-mode)
+    ;; Don't use "%k%c%r", because `keycast-format` adds extra padding for "%k".
+    (alynx-mode-line--concat-with-sperator
+     (propertize (keycast-format "%K") 'face 'keycast-key)
+     (keycast-format "%c%r"))))
+
 (defun alynx-mode-line--segment-process ()
   "Display the current value of `mode-line-process'."
   ;; Call `format-mode-line` here because we want to detect whether it's empty.
@@ -741,6 +751,7 @@ Checkers checked, in order: `flycheck', `flymake'."
                        (:eval (alynx-mode-line--segment-major-mode))
                        (:eval (alynx-mode-line--segment-vc))
                        (:eval (alynx-mode-line--segment-checker))
+                       (:eval (alynx-mode-line--segment-keybinging))
                        (:eval (alynx-mode-line--segment-process))
                        (:eval (alynx-mode-line--segment-misc-info)))))))))
 

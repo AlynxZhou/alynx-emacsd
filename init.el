@@ -979,7 +979,8 @@ point reaches the beginning or end of the buffer, stop there."
   ;; This only affects the built-in mode line.
   ;; (line-number-mode 1)
   ;; (column-number-mode 1)
-  (kill-ring-deindent-mode 1)
+  ;; This makes it hard to copy spaces so I disable it.
+  ;; (kill-ring-deindent-mode 1)
   :custom
   ;; By default if you press backspace on indentations, Emacs will turn a tab
   ;; into spaces and delete one space, I think no one likes this.

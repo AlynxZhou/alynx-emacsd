@@ -1751,27 +1751,28 @@ point reaches the beginning or end of the buffer, stop there."
 ;;   (sis-ism-lazyman-config "xkb:us::eng" "rime" 'ibus)
 ;;   (sis-global-respect-mode t))
 
-(use-package mu4e
-  :load-path (lambda ()
-               (if (alynx/macos-p)
-                   "/opt/homebrew/share/emacs/site-lisp/mu/mu4e"
-                 "/usr/share/emacs/site-lisp/mu4e"))
-  :defer 1
-  :custom
-  (mail-user-agent 'mu4e)
-  (mu4e-maildir "~/Mail/gmail")
-  (mu4e-get-mail-command "mbsync -a")
-  (mu4e-index-lazy-check t)
-  (mu4e-update-interval 300)
-  (mu4e-compose-reply-to-address "alynx.zhou@gmail.com")
-  (mu4e-sent-folder "/[Gmail]/Sent Mail")
-  (mu4e-drafts-folder "/[Gmail]/Drafts")
-  (mu4e-trash-folder  "/[Gmail]/Trash")
-  (mu4e-refile-folder "/[Gmail]/All Mail")
-  (mu4e-compose-format-flowed nil)
-  (mu4e-use-fancy-chars t)
-  (user-mail-address "alynx.zhou@gmail.com")
-  (user-full-name "Alynx Zhou"))
+;; It turns out I never use Emacs for email.
+;; (use-package mu4e
+;;   :load-path (lambda ()
+;;                (if (alynx/macos-p)
+;;                    "/opt/homebrew/share/emacs/site-lisp/mu/mu4e"
+;;                  "/usr/share/emacs/site-lisp/mu4e"))
+;;   :defer 1
+;;   :custom
+;;   (mail-user-agent 'mu4e)
+;;   (mu4e-maildir "~/Mail/gmail")
+;;   (mu4e-get-mail-command "mbsync -a")
+;;   (mu4e-index-lazy-check t)
+;;   (mu4e-update-interval 300)
+;;   (mu4e-compose-reply-to-address "alynx.zhou@gmail.com")
+;;   (mu4e-sent-folder "/[Gmail]/Sent Mail")
+;;   (mu4e-drafts-folder "/[Gmail]/Drafts")
+;;   (mu4e-trash-folder  "/[Gmail]/Trash")
+;;   (mu4e-refile-folder "/[Gmail]/All Mail")
+;;   (mu4e-compose-format-flowed nil)
+;;   (mu4e-use-fancy-chars t)
+;;   (user-mail-address "alynx.zhou@gmail.com")
+;;   (user-full-name "Alynx Zhou"))
 
 (use-package keycast
   :ensure t

@@ -2049,6 +2049,21 @@ point reaches the beginning or end of the buffer, stop there."
          (nxml-mode . lsp-bridge-mode)
          (yaml-ts-mode . lsp-bridge-mode))
   :custom
+  ;; Latest typescript compiler is rewritten by go, which does not provide
+  ;; `tsserver`, instead, `tsc --lsp` should be used, however, currently
+  ;; `typescript-language-server` only supports `tsserver`, so we cannot use it.
+  ;;
+  ;; `lsp-bridge` supports `tsgo --lsp`, which is the previous name, so we could
+  ;; symlink it like `ln -s $(which tsc) ~/bin/tsgo` to use it.
+  ;;
+  ;; This is a temp work around, until `lsp-bridge` or
+  ;; `typescript-language-server` supports `tsc --lsp` directly.
+  (lsp-bridge-javascript-lsp-server (if (executable-find "tsgo")
+                                        'javascript-go
+                                      'javascript))
+  (lsp-bridge-typescript-lsp-server (if (executable-find "tsgo")
+                                        'typescript-go
+                                      'typescript))
   (lsp-bridge-enable-hover-diagnostic t)
   ;; See <https://github.com/manateelazycat/lsp-bridge/commit/46ff1693558901f7867d9e7ab7dba98efdecd21c>.
   ;;

@@ -1031,7 +1031,6 @@ point reaches the beginning or end of the buffer, stop there."
   (compilation-max-output-line-length nil))
 
 (use-package project
-  :defer t
   ;; I hardly do single-file compiling.
   :bind (("C-x c" . project-compile)
          ("<f9>" . project-compile))

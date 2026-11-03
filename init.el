@@ -702,6 +702,10 @@ point reaches the beginning or end of the buffer, stop there."
 ;; `C-c`, because `C-z` is hard to press.
 (global-unset-key (kbd "C-z"))
 
+;; Some modes like `svg-tag-mode` uses color from theme, reset them.
+(advice-add 'toggle-theme :after 'font-lock-flush)
+(global-set-key (kbd "C-c t t") 'toggle-theme)
+
 ;; Packages.
 
 ;; This is needed for first running because we will install `use-package`.
@@ -1401,17 +1405,7 @@ point reaches the beginning or end of the buffer, stop there."
   (load-theme 'alynx-one-dark t))
 
 ;; Or sometimes I want light theme.
-(use-package alynx-one-light-theme
-  ;; What we bind here is not from our theme, so the theme is loaded manually.
-  :demand t
-  :config
-  (defun alynx/toggle-theme ()
-    "Toggle between dark and light variant themes and redisplay everything."
-    (interactive)
-    (toggle-theme)
-    ;; Some modes like `svg-tag-mode` uses color from theme, reset them.
-    (font-lock-flush))
-  :bind (("C-c t t" . alynx/toggle-theme)))
+(use-package alynx-one-light-theme)
 
 ;; Or if you like `nano-theme`.
 ;; (use-package nano-theme

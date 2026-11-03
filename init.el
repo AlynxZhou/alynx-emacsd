@@ -5,9 +5,6 @@
 
 ;;; Code:
 
-;; NOTE: If a function / variable is not used for direct calling, add a `alynx/`
-;; prefix for it.
-
 ;; Tweaks.
 ;;
 ;; Those belong to no package and should be done during initialization.
@@ -755,7 +752,7 @@ point reaches the beginning or end of the buffer, stop there."
 ;; for example upgrading packages.
 ;;
 ;; See <https://www.manueluberti.eu/emacs/2021/03/08/package/>.
-(advice-add 'package-menu-execute :after-while #'package-quickstart-refresh)
+(advice-add 'package-menu-execute :after-while 'package-quickstart-refresh)
 
 (package-activate-all)
 
@@ -848,7 +845,7 @@ point reaches the beginning or end of the buffer, stop there."
   ;;                  crm-separator)
   ;;                 (car args))
   ;;         (cdr args)))
-  ;; (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+  ;; (advice-add 'completing-read-multiple :filter-args 'crm-indicator)
   :custom
   ;; Disable startup buffer. It's OK but it's not beautiful and not helpful.
   (inhibit-startup-screen t)
@@ -1310,7 +1307,7 @@ point reaches the beginning or end of the buffer, stop there."
   :ensure t
   :hook ((js2-mode . (lambda ()
                       (add-hook 'xref-backend-functions
-                                #'xref-js2-xref-backend nil t))))
+                                'xref-js2-xref-backend nil t))))
   :bind (:map js-mode-map ("M-." . nil))
   :custom (xref-js2-search-program 'rg))
 
@@ -1604,9 +1601,9 @@ point reaches the beginning or end of the buffer, stop there."
   ;; A workaround to delay style calculating.
   ;; :init
   ;; (defun first-graphical-frame-hook-function ()
-  ;;   (remove-hook 'focus-in-hook #'first-graphical-frame-hook-function)
+  ;;   (remove-hook 'focus-in-hook 'first-graphical-frame-hook-function)
   ;;   (provide 'my-gui))
-  ;; (add-hook 'focus-in-hook #'first-graphical-frame-hook-function)
+  ;; (add-hook 'focus-in-hook 'first-graphical-frame-hook-function)
 
   ;; (with-eval-after-load 'my-gui
   ;;   (setq svg-lib-style-default (svg-lib-style-compute-default)))
@@ -1899,11 +1896,11 @@ point reaches the beginning or end of the buffer, stop there."
   :config
   ;; Optionally tweak the register preview window.
   ;; This adds thin lines, sorting and hides the mode line of the window.
-  (advice-add #'register-preview :override #'consult-register-window)
+  (advice-add 'register-preview :override 'consult-register-window)
   ;; Press `C-s` twice to search last item.
   (defvar my-consult-line-map
     (let ((map (make-sparse-keymap)))
-      (define-key map (kbd "C-s") #'previous-history-element)
+      (define-key map (kbd "C-s") 'previous-history-element)
     map))
   (consult-customize consult-line :keymap my-consult-line-map)
   :custom
@@ -1911,10 +1908,10 @@ point reaches the beginning or end of the buffer, stop there."
   ;; preview for `consult-register`, `consult-register-load`,
   ;; `consult-register-store` and the Emacs built-ins.
   (register-preview-delay 0.5)
-  (register-preview-function #'consult-register-format)
+  (register-preview-function 'consult-register-format)
   ;; Use Consult to select xref locations with preview.
-  (xref-show-xrefs-function #'consult-xref)
-  (xref-show-definitions-function #'consult-xref)
+  (xref-show-xrefs-function 'consult-xref)
+  (xref-show-definitions-function 'consult-xref)
   ;; Optionally configure the narrowing key.
   ;; Both `<` and `C-+` work reasonably well.
   (consult-narrow-key "<")

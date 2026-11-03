@@ -157,6 +157,11 @@ export PATH="/Applications/Emacs.app/Contents/MacOS:/Applications/Emacs.app/Cont
 
 Native compilation may fail on macOS with `ld: library not found for emutls_w`, that is because the default `gcc` binary on macOS is Clang which is different from GCC for some behavior and libraries. The easiest way to fix that is run Emacs in shell with `CC="gcc-15"` environment variable to let it find the real GCC, you don't need to do this every time because native compilation only happens when the compiled cache is outdated or cleared.
 
+# Coding Style
+
+- If a function / variable is not used for direct calling (`M-x`), add a `alynx/` prefix for it.
+- Don't sharp quote (`#'`) a function, quote (`'`) is enough, unless writing a package instead of a configuration file. Emacs Lisp uses different namespaces for functions and variables, so it knows which is needed no matter how you quote it. One little difference is that sharp quote could be a hint for byte-compiling, but configuration files is not expected to be byte-compiled. Another difference is about anonymous function (`lambda`), but actually you don't need to quote `lambda` expression, you should let it self-evaluate.
+
 # Note
 
 ## Indentation Handling

@@ -669,13 +669,19 @@ Checkers checked, in order: `flycheck', `flymake'."
 
 (declare-function keycast-format "keycast" (format))
 
-(defun alynx-mode-line--segment-keybinging ()
+(defun alynx-mode-line--segment-keybinding ()
   "Display keybindings via `keycast-format'."
   (when (bound-and-true-p keycast-invisible-mode)
     ;; Don't use "%k%c%r", because `keycast-format` adds extra padding for "%k".
-    (alynx-mode-line--concat-with-sperator
-     (propertize (keycast-format "%K") 'face 'keycast-key)
-     (keycast-format "%c%r"))))
+    (let ((key (keycast-format "%K"))
+          (command (keycast-format "%C"))
+          (repeat (keycast-format "%r")))
+      ;; `propertize` complains about `nil`.
+      (when (and key command)
+        (alynx-mode-line--concat-with-sperator
+         (propertize key 'face 'keycast-key)
+         (propertize command 'face 'keycast-command)
+         repeat)))))
 
 (defun alynx-mode-line--segment-process ()
   "Display the current value of `mode-line-process'."
@@ -751,7 +757,7 @@ Checkers checked, in order: `flycheck', `flymake'."
                        (:eval (alynx-mode-line--segment-major-mode))
                        (:eval (alynx-mode-line--segment-vc))
                        (:eval (alynx-mode-line--segment-checker))
-                       (:eval (alynx-mode-line--segment-keybinging))
+                       (:eval (alynx-mode-line--segment-keybinding))
                        (:eval (alynx-mode-line--segment-process))
                        (:eval (alynx-mode-line--segment-misc-info)))))))))
 

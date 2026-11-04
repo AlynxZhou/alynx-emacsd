@@ -1255,6 +1255,10 @@ point reaches the beginning or end of the buffer, stop there."
   :hook ((c-mode . (lambda () (setq comment-start "//"
                                     comment-end   "")))))
 
+(use-package elisp-mode
+  ;; `C-j` is used by `join-next-line`.
+  :bind (("C-c C-j" . eval-print-last-sexp)))
+
 ;; It turns out that if I enable `c-ts-mode` here it will automatically remap
 ;; all C files to itself, I don't want this.
 ;; (use-package c-ts-mode

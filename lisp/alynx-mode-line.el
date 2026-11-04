@@ -9,6 +9,11 @@
 ;; Keys are names for different mode line glyphs, values are strings for that
 ;; glyph.  Glyphs used by alynx-mode-line include:
 ;;
+;; `:buffer-narrowed`     | Buffer is narrowed.
+;; `:buffer-popper`       | Buffer is controlled by `popper-mode`.
+;; `:buffer-modified`     | File-backed buffer is modified.
+;; `:buffer-read-only`    | File-backed buffer is read-only.
+;;
 ;; `:checker-info`        | Syntax checker reports notes.
 ;; `:checker-issues`      | Syntax checker reports issues.
 ;; `:checker-good`        | Syntax checker reports no issues.
@@ -21,15 +26,14 @@
 ;; `:vc-needs-update`     | VC backend reports upstream is ahead of local.
 ;; `:vc-conflict`         | VC backend reports conflict.
 ;; `:vc-good`             | VC backend has nothing to report.
-;;
-;; `:buffer-narrowed`     | File-backed buffer is narrowed.
-;; `:buffer-modified`     | File-backed buffer is modified.
-;; `:buffer-read-only`    | File-backed buffer is read-only.
-;;
-;; `:count-separator`     | Separates indicator names from numerical counts.
 
 (defconst alynx-mode-line-glyphs-ascii
-  '((:checker-info . "!")
+  '((:buffer-narrowed . "v")
+    (:buffer-popper . ":")
+    (:buffer-modified . "o")
+    (:buffer-read-only . "#")
+
+    (:checker-info . "!")
     (:checker-issues . "?")
     (:checker-good . "-")
     (:checker-checking . "+")
@@ -40,56 +44,8 @@
     (:vc-needs-merge . ">")
     (:vc-needs-update . "v")
     (:vc-conflict . "x")
-    (:vc-good . "-")
-
-    (:buffer-narrowed . "v")
-    (:buffer-modified . "o")
-    (:buffer-read-only . "#")
-
-    (:count-separator . "*"))
+    (:vc-good . "-"))
   "Set of ASCII glyphs.")
-
-(defconst alynx-mode-line-glyphs-fira-code
-  '((:checker-info . "↳")
-    (:checker-issues . "→")
-    (:checker-good . "✓")
-    (:checker-checking . "⟳")
-    (:checker-errored . "×")
-    (:checker-interrupted . "=")
-
-    (:vc-added . "+")
-    (:vc-needs-merge . "⟷")
-    (:vc-needs-update . "↓")
-    (:vc-conflict . "×")
-    (:vc-good . "✓")
-
-    (:buffer-narrowed . "◢")
-    (:buffer-modified . "●")
-    (:buffer-read-only . "■")
-
-    (:count-separator . "×"))
-  "Set of Fira Code-compatible glyphs.")
-
-(defconst alynx-mode-line-glyphs-unicode
-  '((:checker-info . "🛈")
-    (:checker-issues . "⚑")
-    (:checker-good . "✔")
-    (:checker-checking . "🗘")
-    (:checker-errored . "✖")
-    (:checker-interrupted . "⏸")
-
-    (:vc-added . "🞤")
-    (:vc-needs-merge . "⟷")
-    (:vc-needs-update . "↓")
-    (:vc-conflict . "✖")
-    (:vc-good . "✔")
-
-    (:buffer-narrowed . "▼")
-    (:buffer-modified . "●")
-    (:buffer-read-only . "■")
-
-    (:count-separator . "✕"))
-  "Set of Unicode glyphs.")
 
 (defgroup alynx-mode-line nil
   "Configuration of alynx-mode-line."
@@ -136,20 +92,6 @@ If a region is active, count the region, otherwise the whole buffer."
   "Sperator shows before and after segments."
   :group 'alynx-mode-line
   :type 'string)
-
-(defcustom alynx-mode-line-glyph-type 'ascii
-  "Type of glyph used to draw some mode line segments.
-
-alynx-mode-line includes several sets of glyphs by default:
-
-`ascii'     | Basic ASCII character glyphs.
-`unicode'   | Fancy unicode glyphs.
-`fira-code' | Fira Code-compatible glyphs.
-
-`ascii' will be used as a fallback wherever the a glyph
-may be found to be missing in selected type."
-  :group 'alynx-mode-line
-  :type '(choice (const ascii) (const unicode) (const fira-code)))
 
 ;; Based on `editorconfig-indentation-alist` and `doom-modeline-indent-alist`.
 ;; See <https://github.com/editorconfig/editorconfig-emacs/blob/b8043702f3d977db0e030c6c64ee4a810cad5f45/editorconfig.el#L175>.
@@ -295,6 +237,11 @@ order provided)."
   "Face used for the ':buffer-narrowed' buffer status indicator."
   :group 'alynx-mode-line-faces)
 
+(defface alynx-mode-line-face-buffer-status-popper
+  '((t (:inherit (warning) :weight normal)))
+  "Face used for the ':buffer-popper' buffer status indicator."
+  :group 'alynx-mode-line-faces)
+
 (defface alynx-mode-line-face-major-mode
   '((t (:inherit (mode-line-emphasis))))
   "Face used for the major mode indicator."
@@ -321,15 +268,8 @@ order provided)."
   :group 'alynx-mode-line-faces)
 
 (defun alynx-mode-line--get-glyph (glyph)
-  "Return character from selected glyph list for GLYPH.
-
-If a character could not be found for the requested glyph, a fallback will be
-returned from `alynx-mode-line-glyphs-ascii'."
-  (or (alist-get glyph (pcase alynx-mode-line-glyph-type
-                         ('ascii alynx-mode-line-glyphs-ascii)
-                         ('unicode alynx-mode-line-glyphs-unicode)
-                         ('fira-code alynx-mode-line-glyphs-fira-code)))
-      (alist-get glyph alynx-mode-line-glyphs-ascii)))
+  "Return character from selected glyph list for GLYPH."
+      (alist-get glyph alynx-mode-line-glyphs-ascii))
 
 (defmacro alynx-mode-line--concat-with-sperator (&rest sequences)
   "Concatenate speartor, SEQUENCES and sperator and make the result a string."
@@ -372,25 +312,25 @@ The mode line should fit the `window-width' with space between."
             formatted-right
             (propertize " " 'face 'alynx-mode-line-face-window-selected))))
 
+(declare-function popper-popup-p "popper" (buf))
+
 (defun alynx-mode-line--segment-buffer-status ()
   "Return an indicator representing the status of the current buffer."
   (alynx-mode-line--concat-with-sperator
-   (if (buffer-file-name (buffer-base-buffer))
-       (cond
-        ((buffer-narrowed-p)
-         (propertize (alynx-mode-line--get-glyph :buffer-narrowed)
-                     'face 'alynx-mode-line-face-buffer-status-narrowed))
-        ((buffer-modified-p)
-         (propertize (alynx-mode-line--get-glyph :buffer-modified)
-                     'face 'alynx-mode-line-face-buffer-status-modified))
-        (buffer-read-only
-         (propertize (alynx-mode-line--get-glyph :buffer-read-only)
-                     'face 'alynx-mode-line-face-buffer-status-read-only))
-        (t " "))
-     (if (buffer-narrowed-p)
-         (propertize (alynx-mode-line--get-glyph :buffer-narrowed)
-                     'face 'alynx-mode-line-face-buffer-status-narrowed)
-       " "))))
+   (cond
+    ((buffer-narrowed-p)
+     (propertize (alynx-mode-line--get-glyph :buffer-narrowed)
+                 'face 'alynx-mode-line-face-buffer-status-narrowed))
+    ((and (bound-and-true-p popper-mode) (popper-popup-p (current-buffer)))
+     (propertize (alynx-mode-line--get-glyph :buffer-popper)
+                 'face 'alynx-mode-line-face-buffer-status-popper))
+    ((and (buffer-file-name (buffer-base-buffer)) (buffer-modified-p))
+     (propertize (alynx-mode-line--get-glyph :buffer-modified)
+                 'face 'alynx-mode-line-face-buffer-status-modified))
+    ((and (buffer-file-name (buffer-base-buffer)) buffer-read-only)
+     (propertize (alynx-mode-line--get-glyph :buffer-read-only)
+                 'face 'alynx-mode-line-face-buffer-status-read-only))
+    (t " "))))
 
 (defun alynx-mode-line--segment-buffer-name ()
   "Display the name of the current buffer."

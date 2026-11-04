@@ -987,7 +987,8 @@ point reaches the beginning or end of the buffer, stop there."
   ;; By default if you press backspace on indentations, Emacs will turn a tab
   ;; into spaces and delete one space, I think no one likes this.
   (backward-delete-char-untabify-method nil)
-  (kill-do-not-save-duplicates t))
+  (kill-do-not-save-duplicates t)
+  (shell-command-prompt-show-cwd t))
 
 ;; See <https://dougie.io/emacs/indentation/>.
 ;;
@@ -1423,9 +1424,7 @@ point reaches the beginning or end of the buffer, stop there."
   ;; :commands (alynx-mode-line-mode)
   :functions (alynx-mode-line-mode)
   :config
-  (alynx-mode-line-mode 1)
-  :custom
-  (alynx-mode-line-glyph-type 'ascii))
+  (alynx-mode-line-mode 1))
 
 ;; (use-package nano-modeline
 ;;   :ensure t
@@ -1719,8 +1718,9 @@ point reaches the beginning or end of the buffer, stop there."
                               ;; This will shown when you click TAB on `M-:`.
                               "\\*Completions\\*"
                               "\\*Compile-Log\\*"
-                              "Output\\*$"
                               "\\*Async Shell Command\\*"
+                              "\\*Shell Command Output\\*"
+                              "Output\\*$"
                               ;; Compilation log deserves a big window.
                               ;; compilation-mode
                               help-mode))

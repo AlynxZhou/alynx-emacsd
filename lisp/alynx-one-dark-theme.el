@@ -91,7 +91,7 @@
    `(font-lock-comment-delimiter-face ((t (:inherit (font-lock-comment-face)))))
    `(font-lock-doc-face ((t (:inherit (font-lock-string-face)))))
    `(font-lock-function-name-face ((t (:foreground ,blue))))
-   `(font-lock-keyword-face ((t (:foreground ,purple :weight normal))))
+   `(font-lock-keyword-face ((t (:foreground ,purple))))
    `(font-lock-preprocessor-face ((t (:foreground ,mono-2))))
    `(font-lock-string-face ((t (:foreground ,green))))
    `(font-lock-type-face ((t (:foreground ,orange-2))))
@@ -143,6 +143,16 @@
    ;; This is different from the package called `whitespace`.
    ;; Setting underline is not OK, it blocks region, don't know why.
    `(trailing-whitespace ((t (:background ,guide))))
+
+   ;; Whitespace.
+   ;; Make it less annoying.
+   `(whitespace-newline ((t (:foreground ,guide))))
+   `(whitespace-missing-newline-at-eof ((t (:foreground ,guide))))
+   `(whitespace-space ((t (:foreground ,guide))))
+   `(whitespace-space-after-tab ((t (:foreground ,guide))))
+   `(whitespace-space-before-tab ((t (:foreground ,guide))))
+   `(whitespace-tab ((t (:foreground ,guide))))
+   `(whitespace-trailing ((t (:foreground ,guide))))
 
    ;; Compilation.
    `(compilation-face ((t (:foreground ,fg))))
@@ -287,24 +297,24 @@
    `(rpm-spec-section-face ((t (:foreground ,orange-2))))
 
    ;; `linum`.
-   `(linum ((t (:foreground ,gutter :background ,bg :weight normal :slant normal))))
+   `(linum ((t (:foreground ,gutter :background ,bg))))
    ;; `hlinum`.
-   `(linum-highlight-face ((t (:foreground ,fg :background ,bg :weight normal :slant normal))))
+   `(linum-highlight-face ((t (:foreground ,fg :background ,bg))))
    ;; Native line numbers (version >=26).
-   `(line-number ((t (:foreground ,gutter :background ,bg :weight normal :slant normal))))
-   `(line-number-current-line ((t (:foreground ,fg :background ,bg :weight normal :slant normal))))
+   `(line-number ((t (:foreground ,gutter :background ,bg))))
+   `(line-number-current-line ((t (:foreground ,fg :background ,bg))))
 
    ;; Fill column indicator.
    ;; Inherit shadow, so no background is set, and then use better color, and
    ;; ignore styles.
-   `(fill-column-indicator ((t (:inherit (shadow) :weight normal :slant normal :foreground ,guide))))
+   `(fill-column-indicator ((t (:foreground ,guide))))
 
    ;; Highlight indent guides.
    ;; Similiar to fill column indicator. I don't use responsive guides so
    ;; those are enough.
-   `(highlight-indent-guides-character-face ((t (:inherit (shadow) :weight normal :slant normal :foreground ,guide))))
-   `(highlight-indent-guides-odd-face ((t (:inherit (shadow) :weight normal :slant normal :foreground ,guide))))
-   `(highlight-indent-guides-even-face ((t (:inherit (shadow) :weight normal :slant normal :foreground ,guide))))
+   `(highlight-indent-guides-character-face ((t (:foreground ,guide))))
+   `(highlight-indent-guides-odd-face ((t (:foreground ,guide))))
+   `(highlight-indent-guides-even-face ((t (:foreground ,guide))))
 
    ;; `regexp-builder`.
    `(reb-match-0 ((t (:background ,level-3-color))))

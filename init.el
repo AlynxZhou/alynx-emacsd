@@ -809,8 +809,11 @@ point reaches the beginning or end of the buffer, stop there."
 ;; config that does not belong to any package and you want to manage them with
 ;; `use-package`.
 (use-package emacs
-  :hook
-  ((minibuffer-setup . cursor-intangible-mode))
+  :hook ((minibuffer-setup . cursor-intangible-mode)
+         ;; Highlight trailing whitespace in `prog-mode` only.
+         (prog-mode . (lambda () (setq show-trailing-whitespace t)))
+         (nxml-mode . (lambda () (setq show-trailing-whitespace t)))
+         (yaml-ts-mode . (lambda () (setq show-trailing-whitespace t))))
   ;; Some files does not have a major mode, and I don't want to define a major
   ;; mode for it, so just use some `lambda` for them.
   ;;
@@ -878,7 +881,7 @@ point reaches the beginning or end of the buffer, stop there."
   (redisplay-skip-fontification-on-input t)
   (jit-lock-defer-time 0)
   (minibuffer-prompt-properties
-        '(read-only t cursor-intangible t face minibuffer-prompt))
+   '(read-only t cursor-intangible t face minibuffer-prompt))
   ;; Enable recursive minibuffers.
   (enable-recursive-minibuffers t)
   ;; Move autosave files and list into backup dir.
@@ -1056,8 +1059,6 @@ point reaches the beginning or end of the buffer, stop there."
   :config
   (delete-selection-mode 1))
 
-;; Display line number (gutter) and highlight current line.
-
 (use-package display-line-numbers
   :config
   (global-display-line-numbers-mode 1)
@@ -1071,10 +1072,11 @@ point reaches the beginning or end of the buffer, stop there."
   (global-hl-line-mode 1))
 
 (use-package whitespace
-  ;; Highlight trailing whitespace in `prog-mode` only.
-  :hook ((prog-mode . (lambda () (setq show-trailing-whitespace t)))
-         (nxml-mode . (lambda () (setq show-trailing-whitespace t)))
-         (yaml-ts-mode . (lambda () (setq show-trailing-whitespace t)))))
+  ;; Sometimes manually enabling this is a good idea to check whitespaces.
+  :defer t
+  :custom
+  ;; Showing newlines is annoying, I don't need that.
+  (whitespace-style '(face spaces tabs trailing space-mark tab-mark)))
 
 ;; Built-in minor mode to display column ruler.
 (use-package display-fill-column-indicator
@@ -1087,7 +1089,7 @@ point reaches the beginning or end of the buffer, stop there."
   ;; Currently there are still some problems that preventing us from using
   ;; stipple as fill column indicator:
   ;; 	- If you scale text to some values of width, there is a Emacs bug that it
-  ;;	  will draw two bars when you only gives one.
+  ;; 	  will draw two bars when you only gives one.
   ;; 	- It does not use a buffer-local face, so scaling text in one buffer will
   ;; 	  affect another.
   ;; 	- I don't know how to make the initial state correct.

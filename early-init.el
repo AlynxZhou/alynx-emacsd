@@ -34,7 +34,7 @@
 ;; match One Dark theme. Should keep updated with current theme.
 ;;
 ;; Should only used if `(display-graphic-p)` is `t`, but I am not sure why it
-;; does not work with that. Anyway, I don't use Emacs in terminal.
+;; does not work with that. Anyway, currently it works fine on both GUI and TUI.
 ;;
 ;; See <https://github.com/radian-software/radian/blob/develop/emacs/early-init.el#L16-L23>.
 ;;

@@ -901,14 +901,12 @@ point reaches the beginning or end of the buffer, stop there."
 (use-package server
   :defer t
   :custom
-  ;; HACK: If this is `t`, server will try to raise new frames via calling
-  ;; `gtk_window_present_with_time()`, which has some bugs like unsetting
+  ;; HACK: If this is `t` with PGTK, server will try to raise new frames via
+  ;; calling `gtk_window_present_with_time()`, which has some bugs like unsetting
   ;; maximized frames and still show window decorations in maximized state, just
   ;; disable it as a workaround. (Emacs itself never raises its frame, only
   ;; Emacs server does this, so I don't think it's necessary.)
-  ;;
-  ;; macOS is not affected by this, so only set it to `nil` when using PGTK.
-  (server-raise-frame (alynx/macos-p))
+  (server-raise-frame (not (featurep 'pgtk)))
   (server-log nil))
 
 ;; List dirs first in dired.
@@ -2037,8 +2035,6 @@ point reaches the beginning or end of the buffer, stop there."
 ;; support the latest Python. You may use `uv sync --python 3.13` to request a
 ;; working Python version.
 (use-package lsp-bridge
-  ;; Disable on macOS to prevent crash.
-  ;; :disabled (alynx/macos-p)
   ;; This is not in MELPA and installed as submodules.
   :load-path "site-lisp/lsp-bridge/"
   :defer t

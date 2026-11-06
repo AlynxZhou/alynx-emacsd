@@ -118,6 +118,7 @@ $ CFLAGS="-march=native -O2 -I/opt/homebrew/include -L/opt/homebrew/lib" ./confi
 	--with-gnutls \
 	--with-xml2 \
 	--with-webp \
+	--with-rsvg \
 	--with-mailutils
 ```
 

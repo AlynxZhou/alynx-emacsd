@@ -81,9 +81,9 @@
   (setq ns-use-proxy-icon nil)
   (setq frame-title-format nil)
   (modify-all-frames-parameters '((ns-transparent-titlebar . t)))
-  ;; `(fullscreen . maximized)` should have no effects on child frames, this is
-  ;; what we get on Linux + PGTK, but on macOS, it also affects child frames,
-  ;; which makes ACM popups incomplete, so this is a workaround.
+  ;; HACK: `(fullscreen . maximized)` should have no effects on child frames,
+  ;; which is the behavior on Linux + PGTK, but on macOS + NS, it also affects
+  ;; child frames, which makes ACM popups incomplete, so this is a workaround.
   (advice-add 'make-frame :filter-args
               (lambda (args)
                 (when (alist-get 'parent-frame (car args))

@@ -2068,9 +2068,12 @@ point reaches the beginning or end of the buffer, stop there."
   ;; black rectangle in wrong place for me.
   (lsp-bridge-signature-show-function 'lsp-bridge-signature-show-with-frame)
   (lsp-bridge-signature-show-with-frame-position 'point)
+  ;; I use none of them.
+  (acm-enable-tabnine nil)
+  (acm-enable-codeium nil)
+  (acm-enable-copilot nil)
   ;; It is fancy, but noisy.
-  (acm-enable-doc nil)
-  (acm-enable-tabnine nil))
+  (acm-enable-doc nil))
 
 ;; `gptel` uses this, and we need to redirect its files.
 (use-package transient

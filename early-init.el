@@ -80,7 +80,15 @@
   ;; hide icon and text while using transparent titlebar.
   (setq ns-use-proxy-icon nil)
   (setq frame-title-format nil)
-  (modify-all-frames-parameters '((ns-transparent-titlebar . t))))
+  (modify-all-frames-parameters '((ns-transparent-titlebar . t)))
+  ;; `(fullscreen . maximized)` should have no effects on child frames, this is
+  ;; what we get on Linux + PGTK, but on macOS, it also affects child frames,
+  ;; which makes ACM popups incomplete, so this is a workaround.
+  (advice-add 'make-frame :filter-args
+              (lambda (args)
+                (when (alist-get 'parent-frame (car args))
+                  (push '(fullscreen . nil) (car args)))
+                args)))
 
 ;; Do not resize the frame at this early stage.
 (setq frame-inhibit-implied-resize t)

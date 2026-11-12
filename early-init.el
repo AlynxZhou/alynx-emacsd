@@ -31,19 +31,24 @@
 ;; Initial GUI states, put here to prevent it flash in color or shape.
 
 ;; Set colors before window showing up to avoid white screen flash, those values
-;; match One Dark theme. Should keep updated with current theme.
+;; match One Dark theme. Should keep this updated with current theme.
 ;;
-;; Should only used if `(display-graphic-p)` is `t`, but I am not sure why it
+;; Should only be used if `(display-graphic-p)` is `t`, but I am not sure why it
 ;; does not work with that. Anyway, currently it works fine on both GUI and TUI.
 ;;
 ;; See <https://github.com/radian-software/radian/blob/develop/emacs/early-init.el#L16-L23>.
 ;;
 ;; It seems that `display-graphic-p` has some bugs.
-(set-face-attribute 'default nil
-                    :family "Monaco"
-                    :height 140
-                    :foreground "#ABB2BF"
-                    :background "#282C34")
+;;
+;; Should not be used with daemon, because there is no frame while daemon is
+;; launching, and setting dark variant color here will mess new frames up if
+;; light theme is toggled for daemon.
+(unless (daemonp)
+  (set-face-attribute 'default nil
+                      :family "Monaco"
+                      :height 140
+                      :foreground "#ABB2BF"
+                      :background "#282C34"))
 ;; Hide default mode line until custom mode line is loaded, because the default
 ;; style is ugly and it's useless during startup.
 (setq-default mode-line-format nil)

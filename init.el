@@ -1067,12 +1067,6 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;; Built-in minor mode to display column ruler.
 (use-package display-fill-column-indicator
-  :defer t
-  ;; I only use this in `prog-mode`.
-  :hook ((prog-mode . display-fill-column-indicator-mode)
-         (nxml-mode . display-fill-column-indicator-mode)
-         (yaml-ts-mode . display-fill-column-indicator-mode)
-         (conf-unix-mode . display-fill-column-indicator-mode))
   ;; Currently there are still some problems that preventing us from using
   ;; stipple as fill column indicator:
   ;; 	- If you scale text to some values of width, there is a Emacs bug that it
@@ -1081,7 +1075,8 @@ point reaches the beginning or end of the buffer, stop there."
   ;; 	  affect another.
   ;; 	- I don't know how to make the initial state correct.
   ;; :functions (alynx/make-bar-stipple alynx/update-window-fill-column-indicator)
-  ;; :config
+  :config
+  (global-display-fill-column-indicator-mode 1)
   ;; (defun alynx/make-bar-stipple (left fill)
   ;;   "Make stipple to draw bar for FILL and LEFT padding pixels."
   ;;   (let* ((width (window-font-width))
@@ -1120,7 +1115,7 @@ point reaches the beginning or end of the buffer, stop there."
 (use-package paren
   :defer t
   :custom
-  ;; Using `t` for this is confusing.
+  ;; This is really confusing, because it looks like your cursor jumps.
   (show-paren-when-point-inside-paren nil))
 
 ;; Enable `pixel-scroll-precision-mode` added in Emacs 29.

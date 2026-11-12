@@ -1300,8 +1300,8 @@ point reaches the beginning or end of the buffer, stop there."
 (use-package xref-js2
   :ensure t
   :hook ((js2-mode . (lambda ()
-                      (add-hook 'xref-backend-functions
-                                'xref-js2-xref-backend nil t))))
+                       (add-hook 'xref-backend-functions
+                                 'xref-js2-xref-backend nil t))))
   :bind (:map js-mode-map ("M-." . nil))
   :custom (xref-js2-search-program 'rg))
 
@@ -1469,7 +1469,7 @@ point reaches the beginning or end of the buffer, stop there."
   :custom
   ;; Why you guys always generate garbage in project dir by default?
   (undo-tree-history-directory-alist
-        `(("." . ,(locate-user-emacs-file ".local/undo-tree/")))))
+   `(("." . ,(locate-user-emacs-file ".local/undo-tree/")))))
 
 ;; FIXME: High CPU usage on scrolling.
 (use-package highlight-indent-guides
@@ -1868,8 +1868,6 @@ point reaches the beginning or end of the buffer, stop there."
          ;; `M-r`.
          ([remap previous-matching-history-element] . consult-history)
          ;; ("M-g e" . consult-compile-error)
-         ;; Alternative: `consult-flymake`.
-         ("M-g f" . consult-flycheck)
          ;; Alternative: `consult-outline`.
          ;; ("M-g o" . consult-org-heading)
          ;; ("M-g m" . consult-mark)
@@ -1896,7 +1894,7 @@ point reaches the beginning or end of the buffer, stop there."
   (defvar my-consult-line-map
     (let ((map (make-sparse-keymap)))
       (define-key map (kbd "C-s") 'previous-history-element)
-    map))
+      map))
   (consult-customize consult-line :keymap my-consult-line-map)
   :custom
   ;; Optionally configure the register formatting. This improves the register
@@ -1988,6 +1986,10 @@ point reaches the beginning or end of the buffer, stop there."
   (flycheck-indication-mode 'right-fringe)
   ;; Prevent check on modifications, it makes Emacs laggy.
   (flycheck-check-syntax-automatically '(save mode-enabled)))
+
+(use-package consult-flycheck
+  :ensure t
+  :bind (("M-g f" . consult-flycheck)))
 
 ;; `lsp-bridge` also has error popups and looks better than it.
 ;; (use-package flycheck-posframe

@@ -1713,20 +1713,20 @@ point reaches the beginning or end of the buffer, stop there."
   ;; Some popup windows are focused, but others are not, let them all focused,
   ;; so I could easily close them.
   (popper-reference-buffers '("\\*Backtrace\\*"
-                              "\\*IBuffer\\*"
                               "\\*Warnings\\*"
                               ;; This will shown when you click TAB on `M-:`.
                               "\\*Completions\\*"
                               "\\*Compile-Log\\*"
                               "\\*Flycheck checkers\\*"
                               "\\*Flycheck errors\\*"
-                              "\\*Async Shell Command\\*"
-                              "\\*Shell Command Output\\*"
-                              "Output\\*$"
+                              ;; Popper is not suitable for copying output.
+                              ;; "\\*Async Shell Command\\*"
+                              ;; "\\*Shell Command Output\\*"
                               ;; Compilation log deserves a big window.
                               ;; compilation-mode
                               help-mode))
-  ;; Don't add extra segment because it does not follow my segments.
+  ;; Don't add extra segment because it does not follow my segments. Must use
+  ;; empty string, because popper removes mode-line entirely with `nil`.
   (popper-mode-line ""))
 
 ;; A sticky header, can stick function headers of different languages.

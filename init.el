@@ -127,7 +127,17 @@
                       nil 'prepend)
     (set-fontset-font t charset
                       (font-spec :family "Monaco")
-                      nil 'prepend)))
+                      nil 'prepend))
+  ;; Fix Monaco box-drawing characters and block elements (`▀▄█░▒▓` ) on macOS.
+  (when (alynx/macos-p)
+    (set-fontset-font t '(#x2500 . #x257F)
+                      (font-spec :family "Menlo"))
+    (set-fontset-font t '(#x2580 . #x259F)
+                      (font-spec :family "Menlo"))))
+
+;; Follow fontset choices for symbols instead of preferring the default font.
+;; This is required by the macOS Monaco workaround.
+(setq use-default-font-for-symbols nil)
 
 ;; HACK: Set fallback fonts directly does not work for `emacsclient`. When
 ;; client starts a daemon, it firstly does not have GUI and those font related
@@ -1061,6 +1071,12 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;; Built-in minor mode to display column ruler.
 (use-package display-fill-column-indicator
+  :defer t
+  ;; I only use this in `prog-mode`.
+  :hook ((prog-mode . display-fill-column-indicator-mode)
+         (nxml-mode . display-fill-column-indicator-mode)
+         (yaml-ts-mode . display-fill-column-indicator-mode)
+         (conf-unix-mode . display-fill-column-indicator-mode))
   ;; Currently there are still some problems that preventing us from using
   ;; stipple as fill column indicator:
   ;; 	- If you scale text to some values of width, there is a Emacs bug that it
@@ -1070,7 +1086,6 @@ point reaches the beginning or end of the buffer, stop there."
   ;; 	- I don't know how to make the initial state correct.
   ;; :functions (alynx/make-bar-stipple alynx/update-window-fill-column-indicator)
   :config
-  (global-display-fill-column-indicator-mode 1)
   ;; (defun alynx/make-bar-stipple (left fill)
   ;;   "Make stipple to draw bar for FILL and LEFT padding pixels."
   ;;   (let* ((width (window-font-width))
@@ -1101,10 +1116,17 @@ point reaches the beginning or end of the buffer, stop there."
   ;;     (setq display-fill-column-indicator-character nil)))
   ;; (add-hook 'emacs-startup-hook 'alynx/update-window-fill-column-indicator)
   ;; (add-hook 'text-scale-mode-hook 'alynx/update-window-fill-column-indicator)
+  ;; `display-fill-column-indicator` does not follow fontset fallback, force it
+  ;; use Menlo.
+  (when (alynx/macos-p)
+    (set-face-attribute 'fill-column-indicator nil :family "Menlo"))
   :custom
   ;; Set column ruler at 80 columns. However Emacs displays it in given column,
   ;; so actually we need to add 1 column.
-  (display-fill-column-indicator-column (+ 1 80)))
+  (display-fill-column-indicator-column (+ 1 80))
+  ;; `display-fill-column-indicator` uses ASCII `|` when it finds the box-drawing
+  ;; character cannot be drawn with the default font. This is silly.
+  (display-fill-column-indicator-character ?│))
 
 (use-package paren
   :defer t
@@ -1421,17 +1443,7 @@ point reaches the beginning or end of the buffer, stop there."
 
 (use-package olivetti
   :ensure t
-  :bind (("C-c o" . olivetti-mode))
-  ;; Just disable eye-attracting things in `olivetti-mode`.
-  :hook ((olivetti-mode . (lambda ()
-                            (if olivetti-mode
-                                (progn
-                                  (display-line-numbers-mode -1)
-                                  (display-fill-column-indicator-mode -1)
-                                  (diff-hl-mode -1))
-                              (display-line-numbers-mode 1)
-                              (display-fill-column-indicator-mode 1)
-                              (diff-hl-mode 1))))))
+  :bind (("C-c o" . olivetti-mode)))
 
 ;; Atom-like move regine / current line up and down.
 (use-package move-text
@@ -1480,7 +1492,7 @@ point reaches the beginning or end of the buffer, stop there."
   ;; character is that it shows in default face in candidates of `consult-line`,
   ;; I have some hacks for it in `consult`.
   (highlight-indent-guides-method 'character)
-  ;; (highlight-indent-guides-character ?│)
+  (highlight-indent-guides-character ?│)
   ;; (highlight-indent-guides-method 'bitmap)
   (highlight-indent-guides-bitmap-function
    'highlight-indent-guides--bitmap-line))

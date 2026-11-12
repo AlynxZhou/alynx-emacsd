@@ -1718,6 +1718,8 @@ point reaches the beginning or end of the buffer, stop there."
                               ;; This will shown when you click TAB on `M-:`.
                               "\\*Completions\\*"
                               "\\*Compile-Log\\*"
+                              "\\*Flycheck checkers\\*"
+                              "\\*Flycheck errors\\*"
                               "\\*Async Shell Command\\*"
                               "\\*Shell Command Output\\*"
                               "Output\\*$"

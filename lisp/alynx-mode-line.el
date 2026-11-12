@@ -269,7 +269,7 @@ order provided)."
 
 (defun alynx-mode-line--get-glyph (glyph)
   "Return character from selected glyph list for GLYPH."
-      (alist-get glyph alynx-mode-line-glyphs-ascii))
+  (alist-get glyph alynx-mode-line-glyphs-ascii))
 
 (defmacro alynx-mode-line--concat-with-sperator (&rest sequences)
   "Concatenate speartor, SEQUENCES and sperator and make the result a string."
@@ -359,10 +359,12 @@ The mode line should fit the `window-width' with space between."
 (defun alynx-mode-line--segment-indentation-style ()
   "Display the indentation style of the current buffer."
   (when alynx-mode-line-show-indentation-style
-    (let* ((mode-offset (symbol-value
-                         (seq-some #'identity
-                                   (cdr (assoc major-mode
-                                               alynx-mode-line-mode-indent-offset-alist))))))
+    (let ((mode-offset (seq-some
+                        (lambda (variable)
+                          (when (boundp variable)
+                            (symbol-value variable)))
+                        (cdr (assq major-mode
+                                   alynx-mode-line-mode-indent-offset-alist)))))
       (alynx-mode-line--concat-with-sperator
        (if indent-tabs-mode "TAB" "SPC")
        " "
@@ -717,7 +719,7 @@ Checkers checked, in order: `flycheck', `flymake'."
                  #'alynx-mode-line--checker-flymake-update-segment)
 
   ;; Remove VC hooks.
-  (remove-hook 'file-find-hook #'alynx-mode-line--vc-update-segment)
+  (remove-hook 'find-file-hook #'alynx-mode-line--vc-update-segment)
   (remove-hook 'after-save-hook #'alynx-mode-line--vc-update-segment)
   (advice-remove 'vc-refresh-state #'alynx-mode-line--vc-update-segment)
 

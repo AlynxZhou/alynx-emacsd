@@ -1416,6 +1416,8 @@ point reaches the beginning or end of the buffer, stop there."
   ;; :demand t
   ;; :commands (alynx-mode-line-mode)
   :functions (alynx-mode-line-mode)
+  :custom
+  (alynx-mode-line-mode-indent-offset-alist alynx/mode-indent-offsets)
   :config
   (alynx-mode-line-mode 1))
 

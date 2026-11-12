@@ -504,6 +504,12 @@ If NUM is negative, indent offset will be nil."
 
 ;; Keybindings.
 
+;; Prefer global font scaling instead of buffer content font scaling.
+(dolist (key '("=" "+" "-" "0"))
+  ;; Actually, this looks strange.
+  ;; (global-set-key (kbd (concat "C-x C-M-" key)) 'text-scale-adjust)
+  (global-set-key (kbd (concat "C-x C-" key)) 'global-text-scale-adjust))
+
 ;; Keybindings for setting indentations.
 (global-set-key (kbd "C-c i TAB") 'indent-tabs)
 (global-set-key (kbd "C-c i SPC") 'indent-spaces)

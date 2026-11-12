@@ -660,14 +660,8 @@ point reaches the beginning or end of the buffer, stop there."
                  (unless buffer-file-name
                    (user-error "Not visiting a file"))
                  (list buffer-file-name)))
-  (let ((value (find-sibling-file-noselect file)))
-    (if (listp value)
-	(progn
-	  (setq value (nreverse value))
-	  (switch-to-buffer-other-window (car value))
-	  (mapc 'switch-to-buffer (cdr value))
-	  value)
-      (switch-to-buffer-other-window value))))
+  (switch-to-buffer-other-window
+   (find-sibling-file-noselect file)))
 
 (global-set-key (kbd "C-c M-f") 'find-sibling-file-other-window)
 
@@ -967,7 +961,7 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;; Display line number and column number of cursor in mode line.
 (use-package simple
-  :config
+  ;; :config
   ;; This only affects the built-in mode line.
   ;; (line-number-mode 1)
   ;; (column-number-mode 1)
@@ -1366,14 +1360,15 @@ point reaches the beginning or end of the buffer, stop there."
   ;; Don't ensure it, the MELPA one is old.
   :mode (("\\.spec\\'" . rpm-spec-mode))
   ;; This mode disables many other modes, but I need them.
-  :hook ((rpm-spec-mode . (lambda () (progn (display-line-numbers-mode 1)
-                                            (whole-line-or-region-local-mode 1)
-                                            (display-fill-column-indicator-mode 1)
-                                            (diff-hl-mode 1)
-                                            (highlight-indent-guides-mode 1)
-                                            ;; (indent-bars-mode 1)
-                                            (hl-todo-mode 1)
-                                            (rainbow-mode 1))))))
+  :hook ((rpm-spec-mode . (lambda ()
+                            (display-line-numbers-mode 1)
+                            (whole-line-or-region-local-mode 1)
+                            (display-fill-column-indicator-mode 1)
+                            (diff-hl-mode 1)
+                            (highlight-indent-guides-mode 1)
+                            ;; (indent-bars-mode 1)
+                            (hl-todo-mode 1)
+                            (rainbow-mode 1)))))
 
 ;; Simple packages that have no dependencies.
 
@@ -1428,14 +1423,15 @@ point reaches the beginning or end of the buffer, stop there."
   :ensure t
   :bind (("C-c o" . olivetti-mode))
   ;; Just disable eye-attracting things in `olivetti-mode`.
-  :hook ((olivetti-mode . (lambda () (if olivetti-mode
-                                         (progn
-                                           (display-line-numbers-mode -1)
-                                           (display-fill-column-indicator-mode -1)
-                                           (diff-hl-mode -1))
-                                       (display-line-numbers-mode 1)
-                                       (display-fill-column-indicator-mode 1)
-                                       (diff-hl-mode 1))))))
+  :hook ((olivetti-mode . (lambda ()
+                            (if olivetti-mode
+                                (progn
+                                  (display-line-numbers-mode -1)
+                                  (display-fill-column-indicator-mode -1)
+                                  (diff-hl-mode -1))
+                              (display-line-numbers-mode 1)
+                              (display-fill-column-indicator-mode 1)
+                              (diff-hl-mode 1))))))
 
 ;; Atom-like move regine / current line up and down.
 (use-package move-text
@@ -1576,6 +1572,7 @@ point reaches the beginning or end of the buffer, stop there."
   (diff-hl-draw-borders nil))
 
 (use-package svg-lib
+  :disabled t
   :ensure t
   :custom
   (svg-lib-icons-dir (locate-user-emacs-file ".local/svg-lib/")))
@@ -1585,6 +1582,7 @@ point reaches the beginning or end of the buffer, stop there."
 ;;
 ;; See <https://github.com/rougier/svg-lib/issues/18>.
 (use-package svg-tag-mode
+  :disabled t
   :ensure t
   :functions (global-svg-tag-mode svg-tag-mode)
   ;; A workaround to delay style calculating.
@@ -1908,7 +1906,7 @@ point reaches the beginning or end of the buffer, stop there."
   ;; this just ignores all text properties, so it also hides indent guides.
   (consult-fontify-preserve nil))
 
-;; This depends on `ace-window` and `hydra`, and I hardly use it.
+;; This depends on `ace-window` and `hydra`, and I hardly use it nowadays.
 ;; (use-package treemacs
 ;;   :ensure t
 ;;   :disabled t
@@ -1948,6 +1946,7 @@ point reaches the beginning or end of the buffer, stop there."
   (define-fringe-bitmap 'flycheck-fringe-bitmap-double-left-arrow-hi-res
     [#b0000000000111111]
     nil nil '(center repeated))
+  ;; I don't like double arrow, without anti-aliasing they looks very ugly.
   ;; (define-fringe-bitmap 'flycheck-fringe-bitmap-double-arrow
   ;;   [#b00000100
   ;;    #b00001100

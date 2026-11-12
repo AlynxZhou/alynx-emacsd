@@ -85,8 +85,8 @@
                       ;; :slant 'normal
                       ;; :width 'normal
                       ;; :weight 'normal
-                      ;; 1 height is 1/10 pt. 140 is too small on MacBook Air.
-                      :height (if (alynx/macos-p) 160 140)))
+                      ;; 1 height is 1/10 pt. 140 is too small on macOS.
+                      :height (if (alynx/macos-p) 180 140)))
 
 ;; Set fallback fonts, like 中文 or 😸.
 ;;

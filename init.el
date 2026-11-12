@@ -389,49 +389,38 @@ If NUM is negative, indent offset will be nil."
 (defun guess-indent ()
   "Guess and set indent-offset and tab/space for current buffer."
   (interactive)
-  (if (member major-mode alynx/skip-guess-indent-modes)
-      (message (format "Skip guess-indent for %s." (symbol-name major-mode)))
+  (if (memq major-mode alynx/skip-guess-indent-modes)
+      (message "Skip guess-indent for %s." major-mode)
     ;; Ideally we should iterate the whole buffer, but that's impossible for big
     ;; files. Let's assume we always have 1-level indented code in the first 200
     ;; lines.
-    (let* ((total-lines (count-lines (point-min) (point-max)))
-           (detect-lines (min total-lines 200))
-           (shortest-spaces 0)
-           (has-tab nil))
+    (let ((shortest-spaces 0)
+          (has-tab nil))
       (save-mark-and-excursion
         (save-restriction
           (widen)
           (goto-char (point-min))
-          (dotimes (i detect-lines)
-            (let (current-char)
-              (goto-char (line-beginning-position))
-              (setq current-char (char-after))
+          (let ((lines 0))
+            (while (and (< lines 200) (not (eobp)))
               (cond
                ;; We assume no one uses indent offset which is larger than 1 tab
                ;; width, so there won't be 1 tab plus 2 spaces as 1 level. We
                ;; also assume there is no line that contains only tabs.
-               ((= current-char ?\t) (setq has-tab t))
-               ((= current-char ?\s)
+               ((eq (char-after) ?\t) (setq has-tab t))
+               ((eq (char-after) ?\s)
                 ;; Calculate how many spaces in prefix.
-                (let ((spaces 0))
-                  (while (= current-char ?\s)
-                    (setq spaces (+ spaces 1))
-                    (forward-char 1)
-                    (setq current-char (char-after)))
-                  ;; (message "Line %d has %d spaces." i spaces)
+                (let ((spaces (skip-chars-forward " ")))
                   ;; You may have lines only contains spaces in a file that
                   ;; indented with tabs. Just ignore those lines.
                   ;;
                   ;; Let's assume no one uses 1-char indent offset.
-                  (when (and (/= current-char ?\n)
-                             (/= current-char ?\r)
-                             (/= spaces 0)
-                             (/= spaces 1)
+                  (when (and (not (memq (char-after) '(nil ?\n ?\r)))
+                             (> spaces 1)
                              (or (= shortest-spaces 0)
                                  (< spaces shortest-spaces)))
                     (setq shortest-spaces spaces)))))
-              (forward-line 1))
-            i)))
+              (forward-line 1)
+              (setq lines (1+ lines))))))
       ;; If a file uses tabs to indent, and we cannot get shortest spaces, this
       ;; file is likely to only use tabs, and the indent offset is tab width,
       ;; otherwise the shortest spaces length is indent offset.

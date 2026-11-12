@@ -14,13 +14,6 @@
 ;; `:buffer-modified`     | File-backed buffer is modified.
 ;; `:buffer-read-only`    | File-backed buffer is read-only.
 ;;
-;; `:checker-info`        | Syntax checker reports notes.
-;; `:checker-issues`      | Syntax checker reports issues.
-;; `:checker-good`        | Syntax checker reports no issues.
-;; `:checker-checking`    | Syntax checker is running.
-;; `:checker-errored`     | Syntax checker is stopped due to an error.
-;; `:checker-interrupted` | Syntax checker is paused.
-;;
 ;; `:vc-added`            | VC backend reports additions/changes.
 ;; `:vc-needs-merge`      | VC backend reports required merge.
 ;; `:vc-needs-update`     | VC backend reports upstream is ahead of local.
@@ -32,13 +25,6 @@
     (:buffer-popper . ":")
     (:buffer-modified . "o")
     (:buffer-read-only . "#")
-
-    (:checker-info . "!")
-    (:checker-issues . "?")
-    (:checker-good . "-")
-    (:checker-checking . "+")
-    (:checker-errored . "x")
-    (:checker-interrupted . "=")
 
     (:vc-added . "+")
     (:vc-needs-merge . ">")
@@ -315,7 +301,7 @@ The mode line should fit the `window-width' with space between."
 (declare-function popper-popup-p "popper" (buf))
 
 (defun alynx-mode-line--segment-buffer-status ()
-  "Return an indicator representing the status of the current buffer."
+  "Display an indicator to represent the status of the current buffer."
   (alynx-mode-line--concat-with-sperator
    (cond
     ((buffer-narrowed-p)
@@ -372,7 +358,7 @@ The mode line should fit the `window-width' with space between."
        " "
        (number-to-string tab-width)))))
 
-(defun alynx-mode-line--segment-eol-style ()
+(defun alynx-mode-line--segment-eol-type ()
   "Display the EOL type for the coding system of the current buffer."
   (when (and alynx-mode-line-show-eol-style buffer-file-coding-system)
     (alynx-mode-line--concat-with-sperator
@@ -382,18 +368,13 @@ The mode line should fit the `window-width' with space between."
        (2 "CR")))))
 
 (defun alynx-mode-line--segment-encoding ()
-  "Display the name of the coding system of the current buffer."
+  "Display the name of the coding system of the current buffer except `UTF-8'."
   (when (and alynx-mode-line-show-encoding
              buffer-file-coding-system)
-    (alynx-mode-line--concat-with-sperator
-     (let ((coding-system
-            (coding-system-plist buffer-file-coding-system)))
-       (cond
-        ((memq (plist-get coding-system :category)
-               '(coding-category-undecided coding-category-utf-8))
-         "UTF-8")
-        (t
-         (upcase (symbol-name (plist-get coding-system :name)))))))))
+    (let ((coding-system (coding-system-plist buffer-file-coding-system)))
+      (unless (eq (plist-get coding-system :category) 'coding-category-utf-8)
+        (alynx-mode-line--concat-with-sperator
+         (upcase (symbol-name (plist-get coding-system :name))))))))
 
 (defun alynx-mode-line--segment-major-mode ()
   "Display the name of the major mode of the current buffer."
@@ -435,13 +416,16 @@ The mode line should fit the `window-width' with space between."
              (t
               (setq face 'alynx-mode-line-face-status-success
                     glyph :vc-good)))
-            (alynx-mode-line--concat-with-sperator
-             (propertize (concat (alynx-mode-line--get-glyph glyph) " " branch)
-                         'face face))))))
+            (propertize
+             (if (eq glyph :vc-good)
+                 branch
+               (concat branch " " (alynx-mode-line--get-glyph glyph)))
+             'face face)))))
 
 (defun alynx-mode-line--segment-vc ()
-  "Display color-coded version control information."
-  alynx-mode-line--vc-text)
+  "Display version control information."
+  (when alynx-mode-line--vc-text
+    (alynx-mode-line--concat-with-sperator alynx-mode-line--vc-text)))
 
 (defvar-local alynx-mode-line--checker-flycheck-text nil)
 
@@ -476,50 +460,31 @@ Counts will be returned in an alist as the `cdr' of the following keys:
   (setq alynx-mode-line--checker-flycheck-text
         (pcase status
           ('finished
-           (alynx-mode-line--concat-with-sperator
-            (let-alist (alynx-mode-line--checker-flycheck-count)
-              (cond
-               ((> .error-count 0)
-                (propertize (concat (alynx-mode-line--get-glyph :checker-issues)
-                                    " "
-                                    "Error: "
-                                    (number-to-string .all-count))
-                            'face 'alynx-mode-line-face-status-error))
-               ((> .warning-count 0)
-                (propertize (concat (alynx-mode-line--get-glyph :checker-issues)
-                                    " "
-                                    "Issue: "
-                                    (number-to-string .all-count))
-                            'face 'alynx-mode-line-face-status-warning))
-               ((> .info-count 0)
-                (propertize (concat (alynx-mode-line--get-glyph :checker-info)
-                                    " "
-                                    "Info: "
-                                    (number-to-string .all-count))
-                            'face 'alynx-mode-line-face-status-info))
-               ((zerop .all-count)
-                (propertize (concat (alynx-mode-line--get-glyph :checker-good)
-                                    " "
-                                    "Good")
-                            'face 'alynx-mode-line-face-status-success))))))
-          ('running
-           (alynx-mode-line--concat-with-sperator
-            (alynx-mode-line--get-glyph :checker-checking) " " "Checking"))
+           (let-alist (alynx-mode-line--checker-flycheck-count)
+             (cond
+              ((> .error-count 0)
+               (propertize (concat "Error " (number-to-string .all-count))
+                           'face 'alynx-mode-line-face-status-error))
+              ((> .warning-count 0)
+               (propertize (concat "Warning " (number-to-string .all-count))
+                           'face 'alynx-mode-line-face-status-warning))
+              ((> .info-count 0)
+               (propertize (concat "Info " (number-to-string .all-count))
+                           'face 'alynx-mode-line-face-status-info))
+              ((zerop .all-count) nil))))
+          ;; ('running "Checking")
+          ;; Hide this and if not running.
+          ;; ('no-checker nil)
           ('errored
-           (alynx-mode-line--concat-with-sperator
-            (propertize (concat (alynx-mode-line--get-glyph :checker-errored)
-                                " "
-                                "Error")
-                        'face 'alynx-mode-line-face-status-error)))
-          ('interrupted
-           (alynx-mode-line--concat-with-sperator
-            (alynx-mode-line--get-glyph :checker-interrupted) " " "Paused"))
-          ;; Hide this and its sperators if not running.
-          ('no-checker ""))))
+           (propertize (concat "Error")
+                       'face 'alynx-mode-line-face-status-error))
+          ('interrupted "Paused"))))
 
 (defun alynx-mode-line--segment-checker-flycheck ()
   "Display the current status of flycheck."
-  alynx-mode-line--checker-flycheck-text)
+  (when alynx-mode-line--checker-flycheck-text
+    (alynx-mode-line--concat-with-sperator
+     alynx-mode-line--checker-flycheck-text)))
 
 (defvar-local alynx-mode-line--checker-flymake-text nil)
 
@@ -559,45 +524,28 @@ Counts will be returned in an alist as the cdr of the following keys:
 (defun alynx-mode-line--checker-flymake-update-segment (&rest _)
   "Update `alynx-mode-line--checker-flymake-text' against the state of flymake."
   (setq alynx-mode-line--checker-flymake-text
-        (if (and (fboundp 'flymake-is-running)
-                 (flymake-is-running))
-            (let-alist (alynx-mode-line--checker-flymake-count)
-              (cond
-               ((seq-difference (flymake-running-backends)
-                                (flymake-reporting-backends))
-                (alynx-mode-line--concat-with-sperator
-                 (alynx-mode-line--get-glyph :checker-checking) " " "Checking"))
-               ((> .error-count 0)
-                (alynx-mode-line--concat-with-sperator
-                 (propertize (concat (alynx-mode-line--get-glyph :checker-issues)
-                                     " "
-                                     "Errors: "
-                                     (number-to-string .all-count))
-                             'face 'alynx-mode-line-face-status-error)))
-               ((> .warning-count 0)
-                (alynx-mode-line--concat-with-sperator
-                 (propertize (concat (alynx-mode-line--get-glyph :checker-issues)
-                                     " "
-                                     "Issues: "
-                                     (number-to-string .all-count))
-                             'face 'alynx-mode-line-face-status-warning)))
-               ((> .info-count 0)
-                (alynx-mode-line--concat-with-sperator
-                 (propertize (concat (alynx-mode-line--get-glyph :checker-info)
-                                     " "
-                                     "Info: "
-                                     (number-to-string .all-count))
-                             'face 'alynx-mode-line-face-status-info)))
-               (t
-                (alynx-mode-line--concat-with-sperator
-                 (propertize (concat (alynx-mode-line--get-glyph :checker-good)
-                                     " "
-                                     "Good")
-                             'face 'alynx-mode-line-face-status-success))))))))
+        (when (and (fboundp 'flymake-is-running)
+                   (flymake-is-running))
+          (let-alist (alynx-mode-line--checker-flymake-count)
+            (cond
+             ((seq-difference (flymake-running-backends)
+                              (flymake-reporting-backends))
+              "Checking")
+             ((> .error-count 0)
+              (propertize (concat "Error " (number-to-string .all-count))
+                          'face 'alynx-mode-line-face-status-error))
+             ((> .warning-count 0)
+              (propertize (concat "Warning " (number-to-string .all-count))
+                          'face 'alynx-mode-line-face-status-warning))
+             ((> .info-count 0)
+              (propertize (concat "Info " (number-to-string .all-count))
+                          'face 'alynx-mode-line-face-status-info)))))))
 
 (defun alynx-mode-line--segment-checker-flymake ()
   "Display the current status of flymake."
-  alynx-mode-line--checker-flymake-text)
+  (when alynx-mode-line--checker-flymake-text
+    (alynx-mode-line--concat-with-sperator
+     alynx-mode-line--checker-flymake-text)))
 
 (defun alynx-mode-line--segment-checker ()
   "Return the correct mode line segment for the first active checker found.
@@ -694,7 +642,7 @@ Checkers checked, in order: `flycheck', `flymake'."
                      ;; Right.
                      '((:eval (alynx-mode-line--segment-word-count))
                        (:eval (alynx-mode-line--segment-indentation-style))
-                       (:eval (alynx-mode-line--segment-eol-style))
+                       (:eval (alynx-mode-line--segment-eol-type))
                        (:eval (alynx-mode-line--segment-encoding))
                        (:eval (alynx-mode-line--segment-major-mode))
                        (:eval (alynx-mode-line--segment-vc))

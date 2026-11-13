@@ -9,10 +9,6 @@
 ;;
 ;; Those belong to no package and should be done during initialization.
 
-(defun alynx/macos-p ()
-  "Check whether current system is macOS."
-  (eq system-type 'darwin))
-
 ;; Show loading details after startup.
 (add-hook 'emacs-startup-hook
           (lambda ()
@@ -26,6 +22,10 @@
                        gcs-done
                        (if (> gcs-done 1) "collections" "collection"))
                (emacs-init-time "%.2fs")))))
+
+(defun alynx/macos-p ()
+  "Check whether current system is macOS."
+  (eq system-type 'darwin))
 
 ;; Git submodule packages.
 (if (alynx/macos-p)
@@ -64,6 +64,15 @@
                          (expand-file-name "/opt/homebrew/bin")
                          (expand-file-name "~/bin")
                          (getenv "PATH"))))
+
+(when (featurep 'ns)
+  (defun alynx/sync-ns-appearance (theme)
+    "Sync native appearance with THEME."
+    (let* ((properties (get theme 'theme-properties))
+           (appearance (plist-get properties :background-mode)))
+      (when (memq appearance '(light dark))
+        (modify-all-frames-parameters `((ns-appearance . ,appearance))))))
+  (add-hook 'enable-theme-functions 'alynx/sync-ns-appearance))
 
 ;; Fonts.
 
@@ -703,6 +712,18 @@ point reaches the beginning or end of the buffer, stop there."
 (advice-add 'toggle-theme :after 'font-lock-flush)
 (global-set-key (kbd "C-c t t") 'toggle-theme)
 
+(defvar alynx/transparent nil
+  "Whether frame transparency is enabled.")
+(defun toggle-transparency ()
+  "Toggle transparency for all frames."
+  (interactive)
+  (setq alynx/transparent (not alynx/transparent))
+  (let ((key (if (featurep 'ns) 'alpha 'alpha-background))
+        (value (if alynx/transparent 95 100)))
+  (modify-all-frames-parameters `((,key . ,value)))))
+
+(global-set-key (kbd "C-c t a") 'toggle-transparency)
+
 ;; Packages.
 
 ;; This is needed for first running because we will install `use-package`.
@@ -949,6 +970,8 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;; Disable menu bar, tool bar, scroll bar and cursor blink.
 
+;; Emacs NS also reads macOS defaults to decide whether shows menu bar, disable
+;; menu bar entirely by exec `defaults write org.gnu.Emacs Menus -string NO`.
 (use-package menu-bar
   :defer t
   :config
@@ -1259,7 +1282,7 @@ point reaches the beginning or end of the buffer, stop there."
   :defer t
   ;; I am a modern guy.
   :hook ((c-mode . (lambda () (setq comment-start "//"
-                                    comment-end   "")))))
+                                    comment-end "")))))
 
 (use-package elisp-mode
   ;; `C-j` is used by `join-next-line`.
@@ -1270,7 +1293,7 @@ point reaches the beginning or end of the buffer, stop there."
 ;; (use-package c-ts-mode
 ;;   ;; I am a modern guy.
 ;;   :hook ((c-ts-mode . (lambda () (setq comment-start "//"
-;;                                        comment-end   ""))))
+;;                                        comment-end ""))))
 ;;   :custom
 ;;   (c-ts-mode-indent-style 'linux))
 

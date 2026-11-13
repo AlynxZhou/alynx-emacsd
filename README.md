@@ -23,6 +23,12 @@ $ cd ~/.emacs.d
 $ git submodule init && git submodule update --recursive
 ```
 
+On macOS, you need to run the following command to disable menu bar entirely:
+
+```
+$ defaults write org.gnu.Emacs Menus -string NO
+```
+
 To use tree-sitter, tree-sitter language modules are needed, manually building them from <https://github.com/casouri/tree-sitter-module/> is recommended:
 
 ```shell

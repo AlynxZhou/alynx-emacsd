@@ -20,7 +20,9 @@
 
 (deftheme alynx-one-dark
   "Alynx One Dark - Alynx's Emacs port of the Atom One Dark theme."
-  :family 'alynx-one)
+  :family 'alynx-one
+  :kind 'color-scheme
+  :background-mode 'dark)
 
 (let ((accent "#528BFF")
       (fg "#ABB2BF")

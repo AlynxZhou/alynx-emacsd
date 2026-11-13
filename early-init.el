@@ -67,13 +67,9 @@
 ;;
 ;; See <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=61710>.
 (modify-all-frames-parameters '((fullscreen . maximized)
-                                ;; NOTE: Alpha background does not work with
+                                ;; NOTE: `alpha-background` does not work with
                                 ;; fullscreen.
-                                ;;
-                                ;; It looks good if there is nothing between
-                                ;; Emacs and wallpaper, however I typically have
-                                ;; a fullscreen terminal and it looks terrible.
-                                ;; (alpha-background . 90)
+                                (alpha-background . 100)
                                 (menu-bar-lines . 0)
                                 (tool-bar-lines . 0)
                                 (internal-border-width . 0)
@@ -81,11 +77,12 @@
                                 (vertical-scroll-bars . nil)
                                 (horizontal-scroll-bars . nil)))
 (when (featurep 'ns)
-  ;; I don't know how to change titlebar text color, maybe it is easier to just
-  ;; hide icon and text while using transparent titlebar.
+  ;; Just hide icon because it looks ugly.
   (setq ns-use-proxy-icon nil)
-  (setq frame-title-format nil)
-  (modify-all-frames-parameters '((ns-transparent-titlebar . t)))
+  (modify-all-frames-parameters '((ns-transparent-titlebar . t)
+                                  (ns-appearance . dark)
+                                  ;; NS does not support `alpha-background`.
+                                  (alpha . 100)))
   ;; HACK: `(fullscreen . maximized)` should have no effects on child frames,
   ;; which is the behavior on Linux + PGTK, but on macOS + NS, it also affects
   ;; child frames, which makes ACM popups incomplete, so this is a workaround.

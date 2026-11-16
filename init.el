@@ -1023,7 +1023,6 @@ point reaches the beginning or end of the buffer, stop there."
   (electric-indent-inhibit nil))
 
 (use-package files
-  :defer t
   :bind (("C-x M-f" . find-sibling-file)
          ("C-c C-f" . find-file-other-window)
          ("C-c r" . revert-buffer)
@@ -1100,7 +1099,6 @@ point reaches the beginning or end of the buffer, stop there."
 
 ;; Built-in minor mode to display column ruler.
 (use-package display-fill-column-indicator
-  :defer t
   ;; I only use this in `prog-mode`.
   :hook ((prog-mode . display-fill-column-indicator-mode)
          (nxml-mode . display-fill-column-indicator-mode)
@@ -1279,7 +1277,6 @@ point reaches the beginning or end of the buffer, stop there."
                      (other . "alynx"))))
 
 (use-package cc-mode
-  :defer t
   ;; I am a modern guy.
   :hook ((c-mode . (lambda () (setq comment-start "//"
                                     comment-end "")))))
@@ -1506,7 +1503,6 @@ point reaches the beginning or end of the buffer, stop there."
 ;; FIXME: High CPU usage on scrolling.
 (use-package highlight-indent-guides
   :ensure t
-  :defer t
   ;; I only use this in `prog-mode`.
   :hook ((prog-mode . highlight-indent-guides-mode)
          (nxml-mode . highlight-indent-guides-mode)
@@ -1531,7 +1527,6 @@ point reaches the beginning or end of the buffer, stop there."
 ;; draw two bars when you only gives one.
 (use-package indent-bars
   :ensure t
-  :defer t
   :disabled t
   ;; I only use this in `prog-mode`.
   :hook ((prog-mode . indent-bars-mode)
@@ -1553,7 +1548,6 @@ point reaches the beginning or end of the buffer, stop there."
 ;; `svg-tag-mode` could also achieve this, it looks fancy, but has some bugs.
 (use-package hl-todo
   :ensure t
-  :defer t
   :hook ((prog-mode . hl-todo-mode)
          (nxml-mode . hl-todo-mode)
          (yaml-ts-mode . hl-todo-mode)))
@@ -1696,7 +1690,6 @@ point reaches the beginning or end of the buffer, stop there."
 ;; (use-package rainbow-delimiters
 ;;   :ensure t
 ;;   :disabled t
-;;   :defer t
 ;;   :hook ((prog-mode . rainbow-delimiters-mode)))
 
 ;; Not good, I only use minimap as scroll bar, but it cannot do this well.
@@ -1719,7 +1712,6 @@ point reaches the beginning or end of the buffer, stop there."
 
 (use-package org-bullets
   :ensure t
-  :defer t
   :hook ((org-mode . org-bullets-mode)))
 
 (use-package editorconfig
@@ -1953,7 +1945,6 @@ point reaches the beginning or end of the buffer, stop there."
 ;; (use-package treemacs
 ;;   :ensure t
 ;;   :disabled t
-;;   :defer 1
 ;;   ;; I never use internal input method so bind this to `treemacs`.
 ;;   :bind (("C-\\" . treemacs))
 ;;   ;; Disable line number for `treemacs` window.
@@ -1967,7 +1958,6 @@ point reaches the beginning or end of the buffer, stop there."
 
 (use-package flycheck
   :ensure t
-  :defer t
   :hook ((prog-mode . flycheck-mode)
          ;; (nxml-mode . flycheck-mode)
          (yaml-ts-mode . flycheck-mode)
@@ -2039,7 +2029,6 @@ point reaches the beginning or end of the buffer, stop there."
 ;; Dependency of `lsp-bridge`.
 (use-package yasnippet
   :ensure t
-  :defer t
   :hook ((prog-mode . yas-minor-mode))
   :config
   ;; OK, I finally give up, maybe I need to sync snippets so don't exclude them.
@@ -2067,7 +2056,6 @@ point reaches the beginning or end of the buffer, stop there."
 (use-package lsp-bridge
   ;; This is not in MELPA and installed as submodules.
   :load-path "site-lisp/lsp-bridge/"
-  :defer t
   :hook ((prog-mode . lsp-bridge-mode)
          (nxml-mode . lsp-bridge-mode)
          (yaml-ts-mode . lsp-bridge-mode))
@@ -2112,7 +2100,6 @@ point reaches the beginning or end of the buffer, stop there."
 
 (use-package magit
   :ensure t
-  :defer 1
   :bind (("C-x g" . magit-status)))
 
 ;; If you want to use self-host LLMs with Ollama, see `unused.el`.

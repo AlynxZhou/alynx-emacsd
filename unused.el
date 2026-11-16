@@ -28,6 +28,39 @@
 ;;   (mood-line-encoding ((t (:inherit nil))))
 ;;   (mood-line-unimportant ((t (:inherit nil)))))
 
+;; Not good, I only use minimap as scroll bar, but it cannot do this well.
+;;
+;; If use this don't forget to install block font.
+;;
+;; See <https://github.com/jandamm/doom-emacs-minimap/blob/master/blockfont.ttf>.
+;; (use-package minimap
+;;   :ensure t
+;;   :defer 1
+;;   :config
+;;   (add-to-list 'minimap-major-modes 'markdown-mode)
+;;   (minimap-mode 1)
+;;   :custom
+;;   (minimap-window-location 'right)
+;;   ;; Enlarge breaks BlockFont.
+;;   (minimap-enlarge-certain-faces nil)
+;;   :custom-face
+;;   (minimap-font-face ((t (:height 30 :family "BlockFont")))))
+
+;; This depends on `ace-window` and `hydra`, and I hardly use it nowadays.
+;; (use-package treemacs
+;;   :ensure t
+;;   :disabled t
+;;   ;; I never use internal input method so bind this to `treemacs`.
+;;   :bind (("C-\\" . treemacs))
+;;   ;; Disable line number for `treemacs` window.
+;;   :hook ((treemacs-mode . (lambda () (display-line-numbers-mode -1))))
+;;   :custom
+;;   ;; Default `treemacs` window is too wide.
+;;   (treemacs-width 20)
+;;   (treemacs-persist-file (locate-user-emacs-file ".local/treemacs-persist"))
+;;   (treemacs-last-error-persist-file
+;;    (locate-user-emacs-file ".local/treemacs-persist-at-last-error")))
+
 ;; The FUCKING EVIL SHITTY VSCode TypeScript language server does auto
 ;; formatting on indentation, which makes your code looks like a piece of
 ;; shit. And you have 4 options to solve this:

@@ -1611,53 +1611,6 @@ point reaches the beginning or end of the buffer, stop there."
                                             type)))))
   (diff-hl-draw-borders nil))
 
-(use-package svg-lib
-  :disabled t
-  :ensure t
-  :custom
-  (svg-lib-icons-dir (locate-user-emacs-file ".local/svg-lib/")))
-
-;; I don't enable this, because it makes part of syntax highlighting disappears,
-;; and has bug with `emacsclient`.
-;;
-;; See <https://github.com/rougier/svg-lib/issues/18>.
-(use-package svg-tag-mode
-  :disabled t
-  :ensure t
-  :functions (global-svg-tag-mode svg-tag-mode)
-  ;; A workaround to delay style calculating.
-  ;; :init
-  ;; (defun first-graphical-frame-hook-function ()
-  ;;   (remove-hook 'focus-in-hook 'first-graphical-frame-hook-function)
-  ;;   (provide 'my-gui))
-  ;; (add-hook 'focus-in-hook 'first-graphical-frame-hook-function)
-
-  ;; (with-eval-after-load 'my-gui
-  ;;   (setq svg-lib-style-default (svg-lib-style-compute-default)))
-  ;; Maybe use with hooks.
-  :config
-  ;; Make byte-compiler happy (for flycheck) until `:functions` really works.
-  (declare-function global-svg-tag-mode "svg-tag-mode" (&optional arg))
-  (declare-function svg-tag-mode "svg-tag-mode" (&optional arg))
-  ;; (global-svg-tag-mode 1)
-  :custom
-  ;; See <https://github.com/rougier/svg-tag-mode#usage-example>.
-  (svg-tag-tags
-   '(("\\(:[A-Z]+:\\)" . ((lambda (tag)
-                            (svg-tag-make tag :beg 1 :end -1))))
-     ("TODO:" . ((lambda (tag)
-                   (svg-tag-make tag
-                                 :beg 0 :end -1 :inverse t :face 'warning))))
-     ("FIXME:" . ((lambda (tag)
-                    (svg-tag-make tag :beg 0 :end -1 :inverse t :face 'error))))
-     ("NOTE:" . ((lambda (tag)
-                   (svg-tag-make tag :beg 0 :end -1 :inverse t))))
-     ("HACK:" . ((lambda (tag)
-                   (svg-tag-make tag
-                                 :beg 0 :end -1 :inverse t :face 'success))))
-     ("XXX:" . ((lambda (tag)
-                  (svg-tag-make tag :beg 0 :end -1)))))))
-
 (use-package which-key
   :ensure t
   :config
@@ -1696,59 +1649,6 @@ point reaches the beginning or end of the buffer, stop there."
 ;;   :ensure t
 ;;   :disabled t
 ;;   :hook ((prog-mode . rainbow-delimiters-mode)))
-
-;; Not good, I only use minimap as scroll bar, but it cannot do this well.
-;;
-;; If use this don't forget to install block font.
-;;
-;; See <https://github.com/jandamm/doom-emacs-minimap/blob/master/blockfont.ttf>.
-;; (use-package minimap
-;;   :ensure t
-;;   :defer 1
-;;   :config
-;;   (add-to-list 'minimap-major-modes 'markdown-mode)
-;;   (minimap-mode 1)
-;;   :custom
-;;   (minimap-window-location 'right)
-;;   ;; Enlarge breaks BlockFont.
-;;   (minimap-enlarge-certain-faces nil)
-;;   :custom-face
-;;   (minimap-font-face ((t (:height 30 :family "BlockFont")))))
-
-(use-package org
-  :ensure t
-  :bind (("C-c a" . org-agenda)
-         ("C-c c" . org-capture)
-         ("C-c l" . org-store-link))
-  :config
-  (make-directory org-directory t)
-  :custom
-  (org-directory (expand-file-name "~/org"))
-  (org-default-notes-file (expand-file-name "notes.org" org-directory))
-  (org-agenda-files `(,org-default-notes-file))
-  (org-capture-templates '(("t" "Task 任务" entry
-                            (file+headline org-default-notes-file "任务")
-                            "* TODO %<%Y-%m-%d %H:%M:%S> %?\n"
-                            :empty-lines 1)
-                           ("n" "Note 笔记" entry
-                            (file+headline org-default-notes-file "笔记")
-                            "* %<%Y-%m-%d %H:%M:%S> %?\n"
-                            :empty-lines 1)
-                           ("j" "Journal 日志" entry
-                            (file+olp+datetree org-default-notes-file "日志")
-                            "* %<%Y-%m-%d %H:%M:%S> %?\n"
-                            :empty-lines 1)))
-  (org-refile-targets '((org-agenda-files :maxlevel . 3)))
-  ;; Record time when task is done.
-  (org-log-done 'time)
-  (org-agenda-skip-scheduled-if-done t)
-  (org-agenda-skip-deadline-if-done t)
-  (org-refile-use-outline-path 'file)
-  (org-outline-path-complete-in-steps nil))
-
-(use-package org-bullets
-  :ensure t
-  :hook ((org-mode . org-bullets-mode)))
 
 (use-package editorconfig
   :ensure t
@@ -1977,20 +1877,40 @@ point reaches the beginning or end of the buffer, stop there."
   ;; this just ignores all text properties, so it also hides indent guides.
   (consult-fontify-preserve nil))
 
-;; This depends on `ace-window` and `hydra`, and I hardly use it nowadays.
-;; (use-package treemacs
-;;   :ensure t
-;;   :disabled t
-;;   ;; I never use internal input method so bind this to `treemacs`.
-;;   :bind (("C-\\" . treemacs))
-;;   ;; Disable line number for `treemacs` window.
-;;   :hook ((treemacs-mode . (lambda () (display-line-numbers-mode -1))))
-;;   :custom
-;;   ;; Default `treemacs` window is too wide.
-;;   (treemacs-width 20)
-;;   (treemacs-persist-file (locate-user-emacs-file ".local/treemacs-persist"))
-;;   (treemacs-last-error-persist-file
-;;    (locate-user-emacs-file ".local/treemacs-persist-at-last-error")))
+(use-package org
+  :ensure t
+  :bind (("C-c a" . org-agenda)
+         ("C-c c" . org-capture)
+         ("C-c l" . org-store-link))
+  :config
+  (make-directory org-directory t)
+  :custom
+  (org-directory (expand-file-name "~/org"))
+  (org-default-notes-file (expand-file-name "notes.org" org-directory))
+  (org-agenda-files `(,org-default-notes-file))
+  (org-capture-templates '(("t" "Task 任务" entry
+                            (file+headline org-default-notes-file "任务")
+                            "* TODO %<%Y-%m-%d %H:%M:%S> %?\n"
+                            :empty-lines 1)
+                           ("n" "Note 笔记" entry
+                            (file+headline org-default-notes-file "笔记")
+                            "* %<%Y-%m-%d %H:%M:%S> %?\n"
+                            :empty-lines 1)
+                           ("j" "Journal 日志" entry
+                            (file+olp+datetree org-default-notes-file "日志")
+                            "* %<%Y-%m-%d %H:%M:%S> %?\n"
+                            :empty-lines 1)))
+  (org-refile-targets '((org-agenda-files :maxlevel . 3)))
+  ;; Record time when task is done.
+  (org-log-done 'time)
+  (org-agenda-skip-scheduled-if-done t)
+  (org-agenda-skip-deadline-if-done t)
+  (org-refile-use-outline-path 'file)
+  (org-outline-path-complete-in-steps nil))
+
+(use-package org-bullets
+  :ensure t
+  :hook ((org-mode . org-bullets-mode)))
 
 (use-package flycheck
   :ensure t
@@ -2147,5 +2067,52 @@ point reaches the beginning or end of the buffer, stop there."
                    :stream t
                    :key 'gptel-api-key-from-auth-source
                    :models '(deepseek-flash))))
+
+(use-package svg-lib
+  :disabled t
+  :ensure t
+  :custom
+  (svg-lib-icons-dir (locate-user-emacs-file ".local/svg-lib/")))
+
+;; I don't enable this, because it makes part of syntax highlighting disappears,
+;; and has bug with `emacsclient`.
+;;
+;; See <https://github.com/rougier/svg-lib/issues/18>.
+(use-package svg-tag-mode
+  :disabled t
+  :ensure t
+  :functions (global-svg-tag-mode svg-tag-mode)
+  ;; A workaround to delay style calculating.
+  ;; :init
+  ;; (defun first-graphical-frame-hook-function ()
+  ;;   (remove-hook 'focus-in-hook 'first-graphical-frame-hook-function)
+  ;;   (provide 'my-gui))
+  ;; (add-hook 'focus-in-hook 'first-graphical-frame-hook-function)
+
+  ;; (with-eval-after-load 'my-gui
+  ;;   (setq svg-lib-style-default (svg-lib-style-compute-default)))
+  ;; Maybe use with hooks.
+  :config
+  ;; Make byte-compiler happy (for flycheck) until `:functions` really works.
+  (declare-function global-svg-tag-mode "svg-tag-mode" (&optional arg))
+  (declare-function svg-tag-mode "svg-tag-mode" (&optional arg))
+  ;; (global-svg-tag-mode 1)
+  :custom
+  ;; See <https://github.com/rougier/svg-tag-mode#usage-example>.
+  (svg-tag-tags
+   '(("\\(:[A-Z]+:\\)" . ((lambda (tag)
+                            (svg-tag-make tag :beg 1 :end -1))))
+     ("TODO:" . ((lambda (tag)
+                   (svg-tag-make tag
+                                 :beg 0 :end -1 :inverse t :face 'warning))))
+     ("FIXME:" . ((lambda (tag)
+                    (svg-tag-make tag :beg 0 :end -1 :inverse t :face 'error))))
+     ("NOTE:" . ((lambda (tag)
+                   (svg-tag-make tag :beg 0 :end -1 :inverse t))))
+     ("HACK:" . ((lambda (tag)
+                   (svg-tag-make tag
+                                 :beg 0 :end -1 :inverse t :face 'success))))
+     ("XXX:" . ((lambda (tag)
+                  (svg-tag-make tag :beg 0 :end -1)))))))
 
 ;;; init.el ends here.

@@ -1261,6 +1261,11 @@ point reaches the beginning or end of the buffer, stop there."
   :custom
   (ibuffer-use-other-window t))
 
+(use-package bookmark
+  :defer t
+  :custom
+  (bookmark-default-file (locate-user-emacs-file ".local/bookmarks.eld")))
+
 ;; I prefer Linux coding style for C, not GNU.
 (use-package cc-vars
   :defer t

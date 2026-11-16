@@ -625,8 +625,7 @@ point reaches the beginning or end of the buffer, stop there."
       (move-beginning-of-line 1))))
 
 ;; Remap `C-a`, `Home` to `smarter-move-beginning-of-line`.
-(global-set-key [remap move-beginning-of-line]
-                'smarter-move-beginning-of-line)
+(global-set-key [remap move-beginning-of-line] 'smarter-move-beginning-of-line)
 
 ;; I found that vim style line insert commands helpful.
 ;;
@@ -1474,7 +1473,7 @@ point reaches the beginning or end of the buffer, stop there."
 
 (use-package olivetti
   :ensure t
-  :bind (("C-c o" . olivetti-mode)))
+  :bind (("C-c t o" . olivetti-mode)))
 
 ;; Atom-like move regine / current line up and down.
 (use-package move-text

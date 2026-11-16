@@ -2101,7 +2101,7 @@ point reaches the beginning or end of the buffer, stop there."
   ;; It is fancy, but noisy.
   (acm-enable-doc nil))
 
-;; `gptel` uses this, and we need to redirect its files.
+;; Magit and `gptel` uses this, and we need to redirect its files.
 (use-package transient
   :ensure t
   :defer t
@@ -2109,6 +2109,11 @@ point reaches the beginning or end of the buffer, stop there."
   (transient-history-file (locate-user-emacs-file ".local/transient/history.el"))
   (transient-levels-file (locate-user-emacs-file ".local/transient/levels.el"))
   (transient-values-file (locate-user-emacs-file ".local/transient/values.el")))
+
+(use-package magit
+  :ensure t
+  :defer 1
+  :bind (("C-x g" . magit-status)))
 
 ;; If you want to use self-host LLMs with Ollama, see `unused.el`.
 (use-package gptel

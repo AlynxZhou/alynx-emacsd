@@ -691,6 +691,7 @@
 ;;
 ;; See <https://src.fedoraproject.org/rpms/emacs-rpm-spec-mode/blob/rawhide/f/fix-define-obsolete-variable-alias.patch>.
 (use-package rpm-spec-mode
+  :load-path "site-lisp/rpm-spec-mode/"
   ;; Don't ensure it, the MELPA one is old.
   :mode (("\\.spec\\'" . rpm-spec-mode))
   ;; This mode disables many other modes, but I need them.

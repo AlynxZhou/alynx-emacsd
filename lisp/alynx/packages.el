@@ -424,16 +424,16 @@
   ;;     (setq display-fill-column-indicator-character nil)))
   ;; (add-hook 'emacs-startup-hook 'alynx/update-window-fill-column-indicator)
   ;; (add-hook 'text-scale-mode-hook 'alynx/update-window-fill-column-indicator)
-  ;; `display-fill-column-indicator` does not follow fontset fallback, force it
-  ;; use Menlo.
+  ;; HACK: `display-fill-column-indicator` does not follow fontset fallback,
+  ;; force it to use Menlo.
   (when (alynx/macos-p)
     (set-face-attribute 'fill-column-indicator nil :family "Menlo"))
   :custom
   ;; Set column ruler at 80 columns. However Emacs displays it in given column,
   ;; so actually we need to add 1 column.
   (display-fill-column-indicator-column (+ 1 80))
-  ;; `display-fill-column-indicator` uses ASCII `|` when it finds the box-drawing
-  ;; character cannot be drawn with the default font. This is silly.
+  ;; HACK: `display-fill-column-indicator` uses ASCII `|` when it finds the
+  ;; box-drawing character cannot be drawn with the default font. This is silly.
   (display-fill-column-indicator-character ?│))
 
 (use-package paren

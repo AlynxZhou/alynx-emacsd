@@ -368,11 +368,14 @@ The mode line should fit the `window-width' with space between."
        (2 "CR")))))
 
 (defun alynx-mode-line--segment-encoding ()
-  "Display the name of the coding system of the current buffer except `UTF-8'."
+  "Display the buffer coding system except UTF-8 and UTF-8-preferring systems."
   (when (and alynx-mode-line-show-encoding
              buffer-file-coding-system)
     (let ((coding-system (coding-system-plist buffer-file-coding-system)))
-      (unless (eq (plist-get coding-system :category) 'coding-category-utf-8)
+      ;; Emacs treats pure ASCII files as undecided category and sets
+      ;; `prefer-utf-8`, because ASCII is valid UTF-8, it is safe to ignore it.
+      (unless (or (eq (plist-get coding-system :category) 'coding-category-utf-8)
+                  (plist-get coding-system :prefer-utf-8))
         (alynx-mode-line--concat-with-sperator
          (upcase (symbol-name (plist-get coding-system :name))))))))
 

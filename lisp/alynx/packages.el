@@ -1339,7 +1339,10 @@
 
 (use-package magit
   :ensure t
-  :bind (("C-x g" . magit-status)))
+  :bind (("C-x g" . magit-status))
+  :custom
+  ;; Without line numbers, fringe is too small to see.
+  (magit-section-disable-line-numbers nil))
 
 ;; If you want to use self-host LLMs with Ollama, see `unused.el`.
 (use-package gptel

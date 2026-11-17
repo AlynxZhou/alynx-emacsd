@@ -1,65 +1,66 @@
-;;; unused.el --- Unused config with interesting comments. -*- lexical-binding: t -*-
+;;; unused.el --- Alynx's unused configurations. -*- lexical-binding: t -*-
 
 ;;; Commentary:
-;; Some config are dropped by some reason, but I have useful comments for them,
-;; or maybe one day I'll copy some custom value from them, so I put them here.
+;; Some configurations are dropped by some reason, but I have useful comments for
+;; them, or maybe one day I'll copy some custom value from them, so I put them
+;; here with interesting comments.
 
 ;;; Code:
 
-;; `doom-modeline` is good, but `mood-line` is enough for me.
-;; Don't defer this because I need it since starting.
-;; (use-package mood-line
-;;   ;; :ensure t
-;;   :load-path "~/Projects/mood-line.alynx/"
-;;   :config
-;;   (mood-line-mode 1)
-;;   :custom
-;;   (mood-line-show-indentation-style t)
-;;   ;; Indent offset and tab width are different things.
-;;   (mood-line-segment-indentation-always-show-offset t)
-;;   (mood-line-show-eol-style t)
-;;   (mood-line-show-encoding-information t)
-;;   (mood-line-show-cursor-point t)
-;;   ;; Fancy. But why Fira Code works better than unicode on my system?
-;;   (mood-line-glyph-alist mood-line-glyphs-fira-code)
-;;   ;; HACK: `mood-line` uses custom faces inherited from shadow, which changes
-;;   ;; foreground color and breaks active/inactive switch, so reset them.
-;;   :custom-face
-;;   (mood-line-encoding ((t (:inherit nil))))
-;;   (mood-line-unimportant ((t (:inherit nil)))))
+(use-package mood-line
+  ;; :ensure t
+  :load-path "~/Projects/mood-line.alynx/"
+  :disabled t
+  :config
+  (mood-line-mode 1)
+  :custom
+  (mood-line-show-indentation-style t)
+  ;; Indent offset and tab width are different things.
+  (mood-line-segment-indentation-always-show-offset t)
+  (mood-line-show-eol-style t)
+  (mood-line-show-encoding-information t)
+  (mood-line-show-cursor-point t)
+  ;; Fancy. But why Fira Code works better than unicode on my system?
+  (mood-line-glyph-alist mood-line-glyphs-fira-code)
+  ;; HACK: `mood-line` uses custom faces inherited from shadow, which changes
+  ;; foreground color and breaks active/inactive switch, so reset them.
+  :custom-face
+  (mood-line-encoding ((t (:inherit nil))))
+  (mood-line-unimportant ((t (:inherit nil)))))
 
 ;; Not good, I only use minimap as scroll bar, but it cannot do this well.
 ;;
 ;; If use this don't forget to install block font.
 ;;
 ;; See <https://github.com/jandamm/doom-emacs-minimap/blob/master/blockfont.ttf>.
-;; (use-package minimap
-;;   :ensure t
-;;   :defer 1
-;;   :config
-;;   (add-to-list 'minimap-major-modes 'markdown-mode)
-;;   (minimap-mode 1)
-;;   :custom
-;;   (minimap-window-location 'right)
-;;   ;; Enlarge breaks BlockFont.
-;;   (minimap-enlarge-certain-faces nil)
-;;   :custom-face
-;;   (minimap-font-face ((t (:height 30 :family "BlockFont")))))
+(use-package minimap
+  :ensure t
+  :disabled t
+  :defer 1
+  :config
+  (add-to-list 'minimap-major-modes 'markdown-mode)
+  (minimap-mode 1)
+  :custom
+  (minimap-window-location 'right)
+  ;; Enlarge breaks BlockFont.
+  (minimap-enlarge-certain-faces nil)
+  :custom-face
+  (minimap-font-face ((t (:height 30 :family "BlockFont")))))
 
 ;; This depends on `ace-window` and `hydra`, and I hardly use it nowadays.
-;; (use-package treemacs
-;;   :ensure t
-;;   :disabled t
-;;   ;; I never use internal input method so bind this to `treemacs`.
-;;   :bind (("C-\\" . treemacs))
-;;   ;; Disable line number for `treemacs` window.
-;;   :hook ((treemacs-mode . (lambda () (display-line-numbers-mode -1))))
-;;   :custom
-;;   ;; Default `treemacs` window is too wide.
-;;   (treemacs-width 20)
-;;   (treemacs-persist-file (locate-user-emacs-file ".local/treemacs-persist"))
-;;   (treemacs-last-error-persist-file
-;;    (locate-user-emacs-file ".local/treemacs-persist-at-last-error")))
+(use-package treemacs
+  :ensure t
+  :disabled t
+  ;; I never use internal input method so bind this to `treemacs`.
+  :bind (("C-\\" . treemacs))
+  ;; Disable line number for `treemacs` window.
+  :hook ((treemacs-mode . (lambda () (display-line-numbers-mode -1))))
+  :custom
+  ;; Default `treemacs` window is too wide.
+  (treemacs-width 20)
+  (treemacs-persist-file (locate-user-emacs-file ".local/treemacs-persist"))
+  (treemacs-last-error-persist-file
+   (locate-user-emacs-file ".local/treemacs-persist-at-last-error")))
 
 ;; The FUCKING EVIL SHITTY VSCode TypeScript language server does auto
 ;; formatting on indentation, which makes your code looks like a piece of
@@ -100,7 +101,7 @@
 ;; I switched to `lsp-bridge` which does not format code via LSP.
 (use-package lsp-mode
   :ensure t
-  :disabled
+  :disabled t
   :commands lsp
   :hook ((c-mode . lsp-deferred)
          (c++-mode . lsp-deferred)
@@ -157,7 +158,7 @@
 ;; High CPU usage on scrolling.
 (use-package lsp-ui
   :ensure t
-  :disabled
+  :disabled t
   :defer 1
   :commands lsp-ui-mode
   :custom
@@ -169,7 +170,7 @@
 
 (use-package lsp-treemacs
   :ensure t
-  :disabled
+  :disabled t
   :defer 1
   :commands lsp-treemacs-errors-list)
 
@@ -236,6 +237,6 @@
 ;; window is not selected (doc says you can pass `t` but you will get errors),
 ;; `mode-line-window-selected-p` is useful to this.
 
-(provide 'unused)
+(provide 'alynx/unused)
 
 ;;; unused.el ends here.

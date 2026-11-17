@@ -1,12 +1,12 @@
 ;;; early-init.el --- Alynx's early-init configurations. -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; This file will be run before GUI start, only put configurations that really
+;; This file will execuate before GUI start, only put configurations that really
 ;; need to be done before GUI here.
 
 ;;; Code:
 
-;; Initial memory tweaks, put here to reduce more garbage collections.
+;; Initial memory tweaks, put here to reduce garbage collections during startup.
 
 ;; Make startup faster by reducing the frequency of garbage collections.
 ;;
@@ -28,7 +28,7 @@
 (add-hook 'emacs-startup-hook (lambda ()
                                 (setq gc-cons-threshold (* 16 1024 1024))))
 
-;; Initial GUI states, put here to prevent it flash in color or shape.
+;; Initial GUI states, put here to prevent it flash color or shape.
 
 ;; Set colors before window showing up to avoid white screen flash, those values
 ;; match One Dark theme. Should keep this updated with current theme.

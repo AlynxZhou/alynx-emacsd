@@ -526,7 +526,7 @@
     (make-empty-file custom-file))
   (load-file custom-file)
   :custom
-  (custom-file (locate-user-emacs-file "custom-file.el")))
+  (custom-file (locate-user-emacs-file ".local/custom-file.el")))
 
 ;; Built-in shell written in Emacs Lisp. I hardly use this, but it has a dir.
 (use-package eshell

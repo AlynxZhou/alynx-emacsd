@@ -10,12 +10,12 @@
 ;; Show loading details after startup.
 (add-hook 'emacs-startup-hook
           (lambda ()
-            (let ((packages-installed (length load-path)))
+            (let ((packages-activated (length package-activated-list)))
               (message
                "Emacs is ready with %s, called %s and took %s."
-               (format "%d installed %s"
-                       packages-installed
-                       (if (> packages-installed 1) "packages" "package"))
+               (format "%d activated %s"
+                       packages-activated
+                       (if (> packages-activated 1) "packages" "package"))
                (format "%d garbage %s"
                        gcs-done
                        (if (> gcs-done 1) "collections" "collection"))

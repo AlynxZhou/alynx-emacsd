@@ -7,6 +7,8 @@
 
 (require 'alynx/utils)
 
+(require 'alynx/indentations)
+
 ;; I prefer Linux coding style for C, not GNU.
 (use-package cc-vars
   :defer t

@@ -7,7 +7,7 @@
 
 (require 'alynx/utils)
 
-;; I maybe use this as some custom keybindings' prefix, but currently I prefer
+;; I maybe use this as prefix for some custom keybindings, but currently I prefer
 ;; `C-c`, because `C-z` is hard to press.
 (global-unset-key (kbd "C-z"))
 

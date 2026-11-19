@@ -409,10 +409,8 @@
 (use-package treesit
   :config
   ;; Well, `c-ts-mode` not works well sometimes.
-  ;; (add-to-list 'major-mode-remap-alist
-  ;;              '(c-mode . c-ts-mode))
-  ;; (add-to-list 'major-mode-remap-alist
-  ;;              '(c++-mode . c++-ts-mode))
+  ;; (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
+  ;; (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
   (add-to-list 'major-mode-remap-alist '(python-mode . python-ts-mode))
   (add-to-list 'major-mode-remap-alist '(css-mode . css-ts-mode))
   :custom

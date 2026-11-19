@@ -20,19 +20,17 @@
   (org-agenda-files `(,org-default-notes-file))
   (org-capture-templates '(("t" "Task 任务" entry
                             (file+headline org-default-notes-file "任务")
-                            "* TODO %<%Y-%m-%d %H:%M:%S> %?\n"
-                            :empty-lines 1)
+                            "* TODO %<%Y-%m-%d %H:%M:%S> %?\n")
                            ("n" "Note 笔记" entry
                             (file+headline org-default-notes-file "笔记")
-                            "* %<%Y-%m-%d %H:%M:%S> %?\n"
-                            :empty-lines 1)
+                            "* %<%Y-%m-%d %H:%M:%S> %?\n")
                            ("j" "Journal 日志" entry
                             (file+olp+datetree org-default-notes-file "日志")
-                            "* %<%Y-%m-%d %H:%M:%S> %?\n"
-                            :empty-lines 1)))
+                            "* %<%Y-%m-%d %H:%M:%S> %?\n")))
   (org-refile-targets '((org-agenda-files :maxlevel . 3)))
   ;; Record time when task is done.
   (org-log-done 'time)
+  (org-hide-emphasis-markers t)
   (org-agenda-skip-scheduled-if-done t)
   (org-agenda-skip-deadline-if-done t)
   (org-refile-use-outline-path 'file)
@@ -41,6 +39,13 @@
 (use-package org-bullets
   :ensure t
   :hook ((org-mode . org-bullets-mode)))
+
+;; Works with `org-hide-emphasis`.
+(use-package org-appear
+  :ensure t
+  :hook ((org-mode . org-appear-mode))
+  :custom
+  (org-appear-delay 0.5))
 
 (provide 'alynx/packages-org)
 

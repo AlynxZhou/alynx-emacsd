@@ -7,6 +7,10 @@
 
 (require 'alynx/utils)
 
+;; I maybe use this as some custom keybindings' prefix, but currently I prefer
+;; `C-c`, because `C-z` is hard to press.
+(global-unset-key (kbd "C-z"))
+
 ;; Prefer global font scaling instead of buffer content font scaling.
 (dolist (key '("=" "+" "-" "0"))
   ;; Actually, this looks strange.
@@ -191,15 +195,11 @@ point reaches the beginning or end of the buffer, stop there."
 (global-set-key (kbd "C-c s") 'show-file-path)
 
 (defun edit-config ()
-  "Open init.el to edit."
+  "Open `user-emacs-directory' to edit configurations."
   (interactive)
-  (find-file (locate-user-emacs-file "init.el")))
+  (find-file user-emacs-directory))
 
-(global-set-key (kbd "C-,") 'edit-config)
-
-;; I maybe use this as some custom keybindings' prefix, but currently I prefer
-;; `C-c`, because `C-z` is hard to press.
-(global-unset-key (kbd "C-z"))
+(global-set-key (kbd "C-c ,") 'edit-config)
 
 ;; Some modes like `svg-tag-mode` uses color from theme, reset them.
 (advice-add 'toggle-theme :after 'font-lock-flush)

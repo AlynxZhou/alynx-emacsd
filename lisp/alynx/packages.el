@@ -466,14 +466,15 @@
   (magit-section-disable-line-numbers nil))
 
 ;; If you want to use self-host LLMs with Ollama, see `unused.el`.
-(use-package gptel
-  :ensure t
-  :defer 1
-  :custom
-  (gptel-backend (gptel-make-deepseek "DeepSeek"
-                   :stream t
-                   :key 'gptel-api-key-from-auth-source
-                   :models '(deepseek-flash))))
+;; (use-package gptel
+;;   :ensure t
+;;   :disabled t
+;;   :defer 1
+;;   :custom
+;;   (gptel-backend (gptel-make-deepseek "DeepSeek"
+;;                    :stream t
+;;                    :key 'gptel-api-key-from-auth-source
+;;                    :models '(deepseek-flash))))
 
 ;; (use-package svg-lib
 ;;   :ensure t

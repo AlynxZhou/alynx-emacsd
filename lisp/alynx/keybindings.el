@@ -1,21 +1,17 @@
 ;;; keybindings.el --- Alynx's keybinding configurations. -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; Global keybindings belong to no package.
+;; Keybindings belong to no package.
 
 ;;; Code:
 
 (require 'alynx/utils)
 
+(require 'alynx/indentations)
+
 ;; I maybe use this as prefix for some custom keybindings, but currently I prefer
 ;; `C-c`, because `C-z` is hard to press.
 (global-unset-key (kbd "C-z"))
-
-;; Prefer global font scaling instead of buffer content font scaling.
-(dolist (key '("=" "+" "-" "0"))
-  ;; Actually, this looks strange.
-  ;; (global-set-key (kbd (concat "C-x C-M-" key)) 'text-scale-adjust)
-  (global-set-key (kbd (concat "C-x C-" key)) 'global-text-scale-adjust))
 
 ;; Keybindings for setting indentations.
 (global-set-key (kbd "C-c i TAB") 'indent-tabs)
@@ -23,25 +19,6 @@
 (global-set-key (kbd "C-c i o") 'set-indent-offset)
 (global-set-key (kbd "C-c i w") 'set-tab-width)
 (global-set-key (kbd "C-c i g") 'guess-indent)
-;; Atom style indent left or right.
-;;
-;; TODO: Currently they will indent by a `tab-width`, I want to modify them to
-;; use `indent-offset`. But I find just re-indent with `TAB` is enough, I hardly
-;; need to manually tweak indent levels.
-;;
-;; See <https://dougie.io/emacs/indent-selection/>.
-;;
-;; NOTE: `M-[` happens to be the terminal escape prefix `\e[` (`Esc [`) so we
-;; cannot use it, otherwise escape sequences will be directly inserted into
-;; buffer because the prefix is handled as keybinding. For example, with iTerm2,
-;; if you focus out and focus in it, you'll see `OI` inserted into buffer,
-;; because they are `\e[O` and `\e[I`.
-;; (global-set-key (kbd "M-[") 'indent-rigidly-left-to-tab-stop)
-;; (global-set-key (kbd "M-]") 'indent-rigidly-right-to-tab-stop)
-
-;; I use this in Atom, but by default `M-;` is used in Emacs, so I may use this
-;; keybinding for others in future.
-(global-set-key (kbd "C-;") 'comment-dwim)
 
 ;; See <https://www.gnu.org/software/emacs/manual/html_node/efaq/Backspace-invokes-help.html>.
 ;;
@@ -200,10 +177,6 @@ point reaches the beginning or end of the buffer, stop there."
   (find-file user-emacs-directory))
 
 (global-set-key (kbd "C-c ,") 'edit-config)
-
-;; Some modes like `svg-tag-mode` uses color from theme, reset them.
-(advice-add 'toggle-theme :after 'font-lock-flush)
-(global-set-key (kbd "C-c t t") 'toggle-theme)
 
 (defvar alynx/transparent nil
   "Whether frame transparency is enabled.")

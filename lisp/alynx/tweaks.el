@@ -21,7 +21,7 @@
                        (if (> gcs-done 1) "collections" "collection"))
                (emacs-init-time "%.2fs")))))
 
-(if (alynx/macos-p)
+(if (alynx/macosp)
     (add-to-list 'load-path "/opt/homebrew/share/emacs/site-lisp/")
   (add-to-list 'load-path "/usr/share/emacs/site-lisp/"))
 ;; Non-ELPA packages.
@@ -50,7 +50,7 @@
 ;; On macOS we set PATH in shell profile, so if we are not starting Emacs from
 ;; shell (for example from launchpad), it cannot get PATH correctly, but we need
 ;; it to load `lsp-bridge`.
-(when (alynx/macos-p)
+(when (alynx/macosp)
   (add-to-list 'exec-path (expand-file-name "~/bin"))
   (add-to-list 'exec-path (expand-file-name "/opt/homebrew/bin"))
   (setenv "PATH" (format "%s:%s:%s"

@@ -25,7 +25,7 @@
                       ;; :width 'normal
                       ;; :weight 'normal
                       ;; 1 height is 1/10 pt. 140 is too small on macOS.
-                      :height (if (alynx/macos-p) 180 140)))
+                      :height (if (alynx/macosp) 180 140)))
 
 ;; Set fallback fonts, like 中文 or 😸.
 ;;
@@ -55,12 +55,12 @@
     (set-fontset-font t charset nil)
     ;; Prepend to the beginning of charset font lists.
     (set-fontset-font t charset
-                      (font-spec :family (if (alynx/macos-p)
+                      (font-spec :family (if (alynx/macosp)
                                              "Apple Color Emoji"
                                            "Noto Color Emoji"))
                       nil 'prepend)
     (set-fontset-font t charset
-                      (font-spec :family (if (alynx/macos-p)
+                      (font-spec :family (if (alynx/macosp)
                                              "PingFang SC"
                                            "Noto Sans Mono CJK SC"))
                       nil 'prepend)
@@ -68,7 +68,7 @@
                       (font-spec :family "Monaco")
                       nil 'prepend))
   ;; Fix Monaco box-drawing characters and block elements (`▀▄█░▒▓` ) on macOS.
-  (when (alynx/macos-p)
+  (when (alynx/macosp)
     (set-fontset-font t '(#x2500 . #x257F)
                       (font-spec :family "Menlo"))
     (set-fontset-font t '(#x2580 . #x259F)

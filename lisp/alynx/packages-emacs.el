@@ -243,12 +243,6 @@
   :custom
   (project-list-file (locate-user-emacs-file ".local/projects.eld")))
 
-(use-package tramp-cache
-  :defer t
-  :custom
-  ;; Move tramp cache into cache dir.
-  (tramp-persistency-file-name (locate-user-emacs-file ".local/cache/tramp")))
-
 (use-package uniquify
   :defer t
   :custom
@@ -327,7 +321,7 @@
   ;; (add-hook 'text-scale-mode-hook 'alynx/update-window-fill-column-indicator)
   ;; HACK: `display-fill-column-indicator` does not follow fontset fallback,
   ;; force it to use Menlo.
-  (when (alynx/macos-p)
+  (when (alynx/macosp)
     (set-face-attribute 'fill-column-indicator nil :family "Menlo"))
   :custom
   ;; Set column ruler at 80 columns. However Emacs displays it in given column,
@@ -342,6 +336,27 @@
   :custom
   ;; This is really confusing, because it looks like your cursor jumps.
   (show-paren-when-point-inside-paren nil))
+
+;; Atom style indent left or right.
+;;
+;; TODO: Currently they will indent by a `tab-width`, I want to modify them to
+;; use `indent-offset`. But I find just re-indent with `TAB` is enough, I hardly
+;; need to manually tweak indent levels.
+;;
+;; See <https://dougie.io/emacs/indent-selection/>.
+;;
+;; NOTE: `M-[` happens to be the terminal escape prefix `\e[` (`Esc [`) so we
+;; cannot use it, otherwise escape sequences will be directly inserted into
+;; buffer because the prefix is handled as keybinding. For example, with iTerm2,
+;; if you focus out and focus in it, you'll see `OI` inserted into buffer,
+;; because they are `\e[O` and `\e[I`.
+;; (use-package indent
+;;   :bind (("M-[" . indent-rigidly-left-to-tab-stop)
+;;          ("M-[" . indent-rigidly-left-to-tab-stop)))
+
+;; I use this in Atom.
+(use-package newcomment
+  :bind (("C-;" . comment-dwim)))
 
 ;; Enable `pixel-scroll-precision-mode` added in Emacs 29.
 ;; FIXME: Leading into strange cursor position jumping with splited windows.
@@ -391,11 +406,6 @@
   :config
   (global-auto-revert-mode 1))
 
-(use-package profiler
-  :bind (("C-c p b" . profiler-start)
-         ("C-c p e" . profiler-stop)
-         ("C-c p r" . profiler-report)))
-
 ;; See <https://git.savannah.gnu.org/cgit/emacs.git/tree/admin/notes/tree-sitter/starter-guide?h=feature/tree-sitter>.
 ;;
 ;; Building <https://github.com/casouri/tree-sitter-module/> is needed, because
@@ -416,33 +426,13 @@
   :custom
   (treesit-extra-load-path `(,(locate-user-emacs-file ".local/treesit"))))
 
-;; Save customization data in a specific file, without littering my init files.
-(use-package cus-edit
-  :config
-  (unless (file-exists-p custom-file)
-    (make-empty-file custom-file))
-  (load-file custom-file)
-  :custom
-  (custom-file (locate-user-emacs-file ".local/custom-file.el")))
-
-;; Built-in shell written in Emacs Lisp. I hardly use this, but it has a dir.
-(use-package eshell
-  :defer t
-  :custom
-  ;; Redirect its data dir.
-  (eshell-directory-name (locate-user-emacs-file ".local/eshell/")))
-
-(use-package ibuffer
-  ;; The default Buffer List is ugly, it is said no one uses it except RMS, so
-  ;; replace it with IBuffer. However I don't use them either.
-  :bind (("C-x C-b" . ibuffer))
-  :custom
-  (ibuffer-use-other-window t))
-
-(use-package bookmark
-  :defer t
-  :custom
-  (bookmark-default-file (locate-user-emacs-file ".local/bookmarks.eld")))
+;; Prefer global font scaling instead of buffer content font scaling. Actually,
+;; the non-global variant looks strange.
+(use-package face-remap
+  :bind (("C-x C-=" . global-text-scale-adjust)
+         ("C-x C-+" . global-text-scale-adjust)
+         ("C-x C--" . global-text-scale-adjust)
+         ("C-x C-0" . global-text-scale-adjust)))
 
 ;; Highlight Markdown-style `inline code block` in comments.
 ;;
@@ -471,6 +461,51 @@
              'font-lock-constant-face)
            prepend)))
      'append)))
+
+(use-package custom
+  :bind (("C-c t t". toggle-theme))
+  :config
+  ;; Some modes like `svg-tag-mode` uses color from theme, reset them.
+  (advice-add 'toggle-theme :after 'font-lock-flush))
+
+;; Save customization data in a specific file, without littering my init files.
+(use-package cus-edit
+  :config
+  (unless (file-exists-p custom-file)
+    (make-empty-file custom-file))
+  (load-file custom-file)
+  :custom
+  (custom-file (locate-user-emacs-file ".local/custom-file.el")))
+
+(use-package ibuffer
+  ;; The default Buffer List is ugly, it is said no one uses it except RMS, so
+  ;; replace it with IBuffer. However I don't use them either.
+  :bind (("C-x C-b" . ibuffer))
+  :custom
+  (ibuffer-use-other-window t))
+
+(use-package profiler
+  :bind (("C-c p b" . profiler-start)
+         ("C-c p e" . profiler-stop)
+         ("C-c p r" . profiler-report)))
+
+;; Built-in shell written in Emacs Lisp. I hardly use this, but it has a dir.
+(use-package eshell
+  :defer t
+  :custom
+  ;; Redirect its data dir.
+  (eshell-directory-name (locate-user-emacs-file ".local/eshell/")))
+
+(use-package bookmark
+  :defer t
+  :custom
+  (bookmark-default-file (locate-user-emacs-file ".local/bookmarks.eld")))
+
+(use-package tramp-cache
+  :defer t
+  :custom
+  ;; Move tramp cache into cache dir.
+  (tramp-persistency-file-name (locate-user-emacs-file ".local/cache/tramp")))
 
 (provide 'alynx/packages-emacs)
 

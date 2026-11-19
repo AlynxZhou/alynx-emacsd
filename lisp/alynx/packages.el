@@ -394,7 +394,7 @@
 ;; It turns out I never use Emacs for email.
 ;; (use-package mu4e
 ;;   :load-path (lambda ()
-;;                (if (alynx/macos-p)
+;;                (if (alynx/macosp)
 ;;                    "/opt/homebrew/share/emacs/site-lisp/mu/mu4e"
 ;;                  "/usr/share/emacs/site-lisp/mu4e"))
 ;;   :disabled t

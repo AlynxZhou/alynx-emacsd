@@ -106,7 +106,11 @@
   ;; HACK: `display-fill-column-indicator` does not follow fontset fallback,
   ;; force it to use Menlo.
   (when (alynx/macosp)
-    (set-face-attribute 'fill-column-indicator nil :family "Menlo"))
+    (set-face-attribute 'fill-column-indicator nil :family "Menlo")
+    ;; We have to redo this each time we toggle theme.
+    (add-hook 'enable-theme-functions
+              (lambda (theme)
+                (set-face-attribute 'fill-column-indicator nil :family "Menlo"))))
   :custom
   ;; Set column ruler at 80 columns. However Emacs displays it in given column,
   ;; so actually we need to add 1 column.

@@ -1,7 +1,7 @@
-;;; packages-org.el --- Alynx's org package configurations. -*- lexical-binding: t; -*-
+;;; packages-org.el --- Alynx's org packages configurations. -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; Org related package-specific configurations.
+;; Org-related package-specific configurations.
 
 ;;; Code:
 

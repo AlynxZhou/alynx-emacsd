@@ -1,7 +1,7 @@
-;;; packages-flycheck.el --- Alynx's flycheck package configurations. -*- lexical-binding: t; -*-
+;;; packages-flycheck.el --- Alynx's Flycheck packages configurations. -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; Flycheck related package-specific configurations.
+;; Flycheck-related package-specific configurations.
 
 ;;; Code:
 
@@ -58,7 +58,7 @@
   :custom
   ;; Otherwise it complains about my configuration modules.
   (flycheck-emacs-lisp-load-path 'inherit)
-  ;; Currently `flycheck` is unable to run local `standardx` with `npx`.
+  ;; Currently Flycheck is unable to run local `standardx` with `npx`.
   ;;
   ;; See <https://github.com/flycheck/flycheck/issues/1428>.
   (flycheck-javascript-standard-executable "/usr/bin/standardx")

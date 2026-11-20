@@ -17,6 +17,10 @@
 
 (require 'alynx/indentations)
 
+(require 'alynx/editing)
+
+(require 'alynx/appearance)
+
 (require 'alynx/keybindings)
 
 (require 'alynx/packages)

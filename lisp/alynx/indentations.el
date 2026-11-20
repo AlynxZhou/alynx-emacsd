@@ -1,4 +1,4 @@
-;;; indentations.el --- Alynx's indentation configurations. -*- lexical-binding: t; -*-
+;;; indentations.el --- Alynx's indentations configurations. -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;; The correct way to indent code in Emacs.

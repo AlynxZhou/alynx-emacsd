@@ -1,4 +1,4 @@
-;;; fonts.el --- Alynx's font configurations. -*- lexical-binding: t; -*-
+;;; fonts.el --- Alynx's fonts configurations. -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;; The correct way to set default and fallback fonts in Emacs.

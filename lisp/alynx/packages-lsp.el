@@ -1,7 +1,7 @@
-;;; packages-lsp.el --- Alynx's LSP package configurations. -*- lexical-binding: t; -*-
+;;; packages-lsp.el --- Alynx's LSP packages configurations. -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; LSP related package-specific configurations.
+;; LSP-related package-specific configurations.
 
 ;;; Code:
 

@@ -1,4 +1,4 @@
-;;; tweaks.el --- Alynx's tweak configurations. -*- lexical-binding: t; -*-
+;;; tweaks.el --- Alynx's tweaks configurations. -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 ;; Tweaks belong to no package and should be done during initialization.
@@ -57,15 +57,6 @@
                          (expand-file-name "/opt/homebrew/bin")
                          (expand-file-name "~/bin")
                          (getenv "PATH"))))
-
-(when (featurep 'ns)
-  (defun alynx/sync-ns-appearance (theme)
-    "Sync native appearance with THEME."
-    (let* ((properties (get theme 'theme-properties))
-           (appearance (plist-get properties :background-mode)))
-      (when (memq appearance '(light dark))
-        (modify-all-frames-parameters `((ns-appearance . ,appearance))))))
-  (add-hook 'enable-theme-functions 'alynx/sync-ns-appearance))
 
 (provide 'alynx/tweaks)
 

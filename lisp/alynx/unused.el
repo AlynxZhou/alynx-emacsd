@@ -185,6 +185,7 @@
 ;; and run `ollama create qwen3527q4 -f Modelfile`.
 (use-package gptel
   :ensure t
+  :disabled t
   :defer 1
   :custom
   (gptel-max-tokens 8192)

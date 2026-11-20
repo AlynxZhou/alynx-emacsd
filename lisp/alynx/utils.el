@@ -1,7 +1,7 @@
-;;; utils.el --- Alynx's util configurations. -*- lexical-binding: t; -*-
+;;; utils.el --- Alynx's utils configurations. -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; Common helper functions required by other modules.
+;; Common helpers and utils required by other modules.
 
 ;;; Code:
 

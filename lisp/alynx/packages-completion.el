@@ -1,7 +1,7 @@
-;;; packages-completion.el --- Alynx's completion package configurations. -*- lexical-binding: t; -*-
+;;; packages-completion.el --- Alynx's completion packages configurations. -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; Completion related package-specific configurations.
+;; Completion-related package-specific configurations.
 
 ;;; Code:
 

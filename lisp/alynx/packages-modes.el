@@ -1,7 +1,7 @@
-;;; packages-modes.el --- Alynx's modes packages configurations. -*- lexical-binding: t; -*-
+;;; packages-modes.el --- Alynx's major modes packages configurations. -*- lexical-binding: t; -*-
 
 ;;; Commentary:
-;; Mode-related package-specific configurations.
+;; Major mode-related package-specific configurations.
 
 ;;; Code:
 

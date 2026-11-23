@@ -30,8 +30,8 @@
 
 (use-package marginalia
   :ensure t
-  ;; Vertico will load it so we don't load it manually.
-  ;; :demand t
+  ;; Prevent lazy-loading, otherwise it won't work.
+  :demand t
   :bind (:map minibuffer-local-map
               ("M-A" . marginalia-cycle))
   :config

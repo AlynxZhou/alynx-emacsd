@@ -2,7 +2,7 @@
 
 ;;; Commentary:
 ;; Just a mode line I want, initially forked from `mood-line`, then removed
-;; features I don't use and fixed font face handling.
+;; features I don't use and made styles consistent.
 
 ;;; Code:
 
@@ -13,6 +13,7 @@
 ;; `:buffer-popper`       | Buffer is controlled by `popper-mode`.
 ;; `:buffer-modified`     | File-backed buffer is modified.
 ;; `:buffer-read-only`    | File-backed buffer is read-only.
+;; `:buffer-none`         | Buffer has nothing special.
 ;;
 ;; `:vc-added`            | VC backend reports additions/changes.
 ;; `:vc-needs-merge`      | VC backend reports required merge.
@@ -25,6 +26,7 @@
     (:buffer-popper . ":")
     (:buffer-modified . "o")
     (:buffer-read-only . "#")
+    (:buffer-none . " ")
 
     (:vc-added . "+")
     (:vc-needs-merge . ">")
@@ -74,7 +76,7 @@ If a region is active, count the region, otherwise the whole buffer."
   :group 'alynx-mode-line
   :type 'boolean)
 
-(defcustom alynx-mode-line-segment-sperator " "
+(defcustom alynx-mode-line-segment-separator " "
   "Sperator shows before and after segments."
   :group 'alynx-mode-line
   :type 'string)
@@ -203,29 +205,29 @@ order provided)."
   "Face used to hint selected window."
   :group 'alynx-mode-line-faces)
 
-(defface alynx-mode-line-face-buffer-name
-  '((t (:inherit (mode-line-buffer-id))))
-  "Face used for displaying the value of `buffer-name'."
-  :group 'alynx-mode-line-faces)
-
 (defface alynx-mode-line-face-buffer-status-modified
-  '((t (:inherit (error) :weight normal)))
+  '((t (:inherit (error) :weight normal :inverse-video t)))
   "Face used for the ':buffer-modified' buffer status indicator."
   :group 'alynx-mode-line-faces)
 
 (defface alynx-mode-line-face-buffer-status-read-only
-  '((t (:inherit (shadow) :weight normal)))
+  '((t (:inherit (shadow) :weight normal :inverse-video t)))
   "Face used for the ':buffer-read-only' buffer status indicator."
   :group 'alynx-mode-line-faces)
 
 (defface alynx-mode-line-face-buffer-status-narrowed
-  '((t (:inherit (warning) :weight normal)))
+  '((t (:inherit (warning) :weight normal :inverse-video t)))
   "Face used for the ':buffer-narrowed' buffer status indicator."
   :group 'alynx-mode-line-faces)
 
 (defface alynx-mode-line-face-buffer-status-popper
-  '((t (:inherit (warning) :weight normal)))
+  '((t (:inherit (warning) :weight normal :inverse-video t)))
   "Face used for the ':buffer-popper' buffer status indicator."
+  :group 'alynx-mode-line-faces)
+
+(defface alynx-mode-line-face-buffer-name
+  '((t (:inherit (mode-line-buffer-id))))
+  "Face used for displaying the value of `buffer-name'."
   :group 'alynx-mode-line-faces)
 
 (defface alynx-mode-line-face-major-mode
@@ -257,11 +259,11 @@ order provided)."
   "Return character from selected glyph list for GLYPH."
   (alist-get glyph alynx-mode-line-glyphs-ascii))
 
-(defmacro alynx-mode-line--concat-with-sperator (&rest sequences)
-  "Concatenate speartor, SEQUENCES and sperator and make the result a string."
-  `(concat alynx-mode-line-segment-sperator
+(defmacro alynx-mode-line--concat-with-separator (&rest sequences)
+  "Concatenate speartor, SEQUENCES and separator and make the result a string."
+  `(concat alynx-mode-line-segment-separator
            ,@sequences
-           alynx-mode-line-segment-sperator))
+           alynx-mode-line-segment-separator))
 
 ;; Instead of the complex 3th argument of `format-mode-line`, this is a simple
 ;; way to make mode line of unselected window inactive.
@@ -285,42 +287,46 @@ The mode line should fit the `window-width' with space between."
   ;; knowing the final string length.
   (let* ((formatted-left (format-mode-line left))
          (formatted-right (format-mode-line right))
-         (right-length (length formatted-right)))
+         (align (string-width formatted-right)))
     ;; We don't need to check selected here, we do it later for the whole line.
-    (concat (propertize " " 'face 'alynx-mode-line-face-window-selected)
-            formatted-left
-            ;; Don't forget to subtract 1 more, because we have a right space!
+    (concat formatted-left
             (propertize " "
                         'display `((space :align-to (- (+ right right-fringe
                                                           right-margin
                                                           scroll-bar)
-                                                       ,right-length 1))))
-            formatted-right
-            (propertize " " 'face 'alynx-mode-line-face-window-selected))))
+                                                       ,align))))
+            formatted-right)))
 
 (declare-function popper-popup-p "popper" (buf))
 
 (defun alynx-mode-line--segment-buffer-status ()
   "Display an indicator to represent the status of the current buffer."
-  (alynx-mode-line--concat-with-sperator
+  (let ((glyph :buffer-none)
+        (face 'alynx-mode-line-face-window-selected))
    (cond
     ((buffer-narrowed-p)
-     (propertize (alynx-mode-line--get-glyph :buffer-narrowed)
-                 'face 'alynx-mode-line-face-buffer-status-narrowed))
+      (setq glyph :buffer-narrowed)
+      (setq face 'alynx-mode-line-face-buffer-status-narrowed))
     ((and (bound-and-true-p popper-mode) (popper-popup-p (current-buffer)))
-     (propertize (alynx-mode-line--get-glyph :buffer-popper)
-                 'face 'alynx-mode-line-face-buffer-status-popper))
+     (setq glyph :buffer-popper)
+     (setq face 'alynx-mode-line-face-buffer-status-popper))
     ((and (buffer-file-name (buffer-base-buffer)) (buffer-modified-p))
-     (propertize (alynx-mode-line--get-glyph :buffer-modified)
-                 'face 'alynx-mode-line-face-buffer-status-modified))
+     (setq glyph :buffer-modified)
+     (setq face 'alynx-mode-line-face-buffer-status-modified))
     ((and (buffer-file-name (buffer-base-buffer)) buffer-read-only)
-     (propertize (alynx-mode-line--get-glyph :buffer-read-only)
-                 'face 'alynx-mode-line-face-buffer-status-read-only))
-    (t " "))))
+     (setq glyph :buffer-read-only)
+     (setq face 'alynx-mode-line-face-buffer-status-read-only))
+    (t
+     (setq glyph :buffer-none)
+     (setq face 'alynx-mode-line-face-window-selected)))
+   ;; Buffer status is 1. special 2. special 3. special.
+   (propertize
+      (alynx-mode-line--concat-with-separator (alynx-mode-line--get-glyph glyph))
+      'face face)))
 
 (defun alynx-mode-line--segment-buffer-name ()
   "Display the name of the current buffer."
-  (alynx-mode-line--concat-with-sperator
+  (alynx-mode-line--concat-with-separator
    ;; `format-mode-line` will attach face to `%b` even I forced
    ;; `mode-line-inactive`, so just resolve it earlier and remove properties.
    (propertize (substring-no-properties (format-mode-line "%b"))
@@ -329,14 +335,14 @@ The mode line should fit the `window-width' with space between."
 (defun alynx-mode-line--segment-cursor-position ()
   "Display the position of the cursor in the current buffer."
   (when alynx-mode-line-show-cursor-position
-    (alynx-mode-line--concat-with-sperator
+    (alynx-mode-line--concat-with-separator
      "%l:%c" " " (number-to-string (point)) " " "%p%%")))
 
 (defun alynx-mode-line--segment-word-count ()
   "Display the number of words in the current buffer or region in text mode."
   (when (and alynx-mode-line-show-word-count
              (derived-mode-p 'text-mode))
-    (alynx-mode-line--concat-with-sperator
+    (alynx-mode-line--concat-with-separator
      (number-to-string (if (region-active-p)
                            (count-words (region-beginning) (region-end))
                          (count-words (buffer-end -1) (buffer-end 1))))
@@ -351,7 +357,7 @@ The mode line should fit the `window-width' with space between."
                             (symbol-value variable)))
                         (cdr (assq major-mode
                                    alynx-mode-line-mode-indent-offset-alist)))))
-      (alynx-mode-line--concat-with-sperator
+      (alynx-mode-line--concat-with-separator
        (if indent-tabs-mode "TAB" "SPC")
        " "
        (if (null mode-offset) "?" (number-to-string mode-offset))
@@ -361,7 +367,7 @@ The mode line should fit the `window-width' with space between."
 (defun alynx-mode-line--segment-eol-type ()
   "Display the EOL type for the coding system of the current buffer."
   (when (and alynx-mode-line-show-eol-style buffer-file-coding-system)
-    (alynx-mode-line--concat-with-sperator
+    (alynx-mode-line--concat-with-separator
      (pcase (coding-system-eol-type buffer-file-coding-system)
        (0 "LF")
        (1 "CRLF")
@@ -376,13 +382,13 @@ The mode line should fit the `window-width' with space between."
       ;; `prefer-utf-8`, because ASCII is valid UTF-8, it is safe to ignore it.
       (unless (or (eq (plist-get coding-system :category) 'coding-category-utf-8)
                   (plist-get coding-system :prefer-utf-8))
-        (alynx-mode-line--concat-with-sperator
+        (alynx-mode-line--concat-with-separator
          (upcase (symbol-name (plist-get coding-system :name))))))))
 
 (defun alynx-mode-line--segment-major-mode ()
   "Display the name of the major mode of the current buffer."
   (when alynx-mode-line-show-major-mode
-    (alynx-mode-line--concat-with-sperator
+    (alynx-mode-line--concat-with-separator
      ;; Call `format-mode-line` here because we want to process the string by
      ;; ourselves and remove useless properties.
      (propertize (substring-no-properties (format-mode-line mode-name))
@@ -401,24 +407,24 @@ The mode line should fit the `window-width' with space between."
                                                      2)))
                  (state (vc-state buffer-file-name
                                   (vc-backend buffer-file-name)))
-                 (face 'alynx-mode-line-face-status-success)
-                 (glyph :vc-good))
+                 (glyph :vc-good)
+                 (face 'alynx-mode-line-face-status-success))
             (cond
              ((memq state '(edited added))
-              (setq face 'alynx-mode-line-face-status-info
-                    glyph :vc-added))
+              (setq glyph :vc-added)
+              (setq face 'alynx-mode-line-face-status-info))
              ((eq state 'needs-merge)
-              (setq face 'alynx-mode-line-face-status-warning
-                    glyph :vc-needs-merge))
+              (setq glyph :vc-needs-merge)
+              (setq face 'alynx-mode-line-face-status-warning))
              ((eq state 'needs-update)
-              (setq face 'alynx-mode-line-face-status-warning
-                    glyph :vc-needs-update))
+              (setq glyph :vc-needs-update)
+              (setq face 'alynx-mode-line-face-status-warning))
              ((memq state '(removed conflict unregistered))
-              (setq face 'alynx-mode-line-face-status-error
-                    glyph :vc-conflict))
+              (setq glyph :vc-conflict)
+              (setq face 'alynx-mode-line-face-status-error))
              (t
-              (setq face 'alynx-mode-line-face-status-success
-                    glyph :vc-good)))
+              (setq glyph :vc-good)
+              (setq face 'alynx-mode-line-face-status-success)))
             (propertize
              (if (eq glyph :vc-good)
                  branch
@@ -428,7 +434,7 @@ The mode line should fit the `window-width' with space between."
 (defun alynx-mode-line--segment-vc ()
   "Display version control information."
   (when alynx-mode-line--vc-text
-    (alynx-mode-line--concat-with-sperator alynx-mode-line--vc-text)))
+    (alynx-mode-line--concat-with-separator alynx-mode-line--vc-text)))
 
 (defvar-local alynx-mode-line--checker-flycheck-text nil)
 
@@ -486,7 +492,7 @@ Counts will be returned in an alist as the `cdr' of the following keys:
 (defun alynx-mode-line--segment-checker-flycheck ()
   "Display the current status of flycheck."
   (when alynx-mode-line--checker-flycheck-text
-    (alynx-mode-line--concat-with-sperator
+    (alynx-mode-line--concat-with-separator
      alynx-mode-line--checker-flycheck-text)))
 
 (defvar-local alynx-mode-line--checker-flymake-text nil)
@@ -547,7 +553,7 @@ Counts will be returned in an alist as the cdr of the following keys:
 (defun alynx-mode-line--segment-checker-flymake ()
   "Display the current status of flymake."
   (when alynx-mode-line--checker-flymake-text
-    (alynx-mode-line--concat-with-sperator
+    (alynx-mode-line--concat-with-separator
      alynx-mode-line--checker-flymake-text)))
 
 (defun alynx-mode-line--segment-checker ()
@@ -571,7 +577,7 @@ Checkers checked, in order: `flycheck', `flymake'."
           (repeat (keycast-format "%r")))
       ;; `propertize` complains about `nil`.
       (when (and key command)
-        (alynx-mode-line--concat-with-sperator
+        (alynx-mode-line--concat-with-separator
          (propertize key 'face 'keycast-key)
          (propertize command 'face 'keycast-command)
          repeat)))))
@@ -581,14 +587,14 @@ Checkers checked, in order: `flycheck', `flymake'."
   ;; Call `format-mode-line` here because we want to detect whether it's empty.
   (let ((process-info (format-mode-line mode-line-process)))
     (unless (string-blank-p process-info)
-      (alynx-mode-line--concat-with-sperator (string-trim process-info)))))
+      (alynx-mode-line--concat-with-separator (string-trim process-info)))))
 
 (defun alynx-mode-line--segment-misc-info ()
   "Display the current value of `mode-line-misc-info'."
   ;; Call `format-mode-line` here because we want to detect whether it's empty.
   (let ((misc-info (format-mode-line mode-line-misc-info)))
     (unless (string-blank-p misc-info)
-      (alynx-mode-line--concat-with-sperator (string-trim misc-info)))))
+      (alynx-mode-line--concat-with-separator (string-trim misc-info)))))
 
 (defvar-local alynx-mode-line--original-mode-line mode-line-format)
 

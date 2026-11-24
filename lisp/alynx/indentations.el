@@ -192,6 +192,7 @@ If NUM is negative, indent offset will be nil."
 (defun set-tab-width (num)
   "Mark this buffer to set tab width to NUM chars."
   (interactive `(,(read-number "Tab width (chars): " tab-width)))
+  (setq num (max num 0))
   (when (/= tab-width num)
     (setq tab-width num)))
 

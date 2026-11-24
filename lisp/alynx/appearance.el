@@ -21,11 +21,8 @@
 ;; Emacs has a lowest opacity of 10 so we can safely accept `0`.
 (defun set-opacity (num)
   "Set opacity to NUM percents."
-  (interactive `(,(read-number "Opacity (0-100): ")))
-  (cond
-   ((< num 0) (setq alynx/opacity 0))
-   ((> num 100) (setq alynx/opacity 100))
-   (t (setq alynx/opacity num)))
+  (interactive `(,(read-number "Opacity (0-100): " alynx/opacity)))
+  (setq alynx/opacity (alynx/clamp num 0 100))
   (setq alynx/transparent nil)
   (toggle-transparency))
 

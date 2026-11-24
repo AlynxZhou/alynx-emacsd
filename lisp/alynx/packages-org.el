@@ -22,6 +22,14 @@
                             (file+headline org-default-notes-file "任务")
                             "* TODO %<%Y-%m-%d %H:%M:%S> %?\n"
                             :empty-lines 1)
+                           ("w" "Work 工作" entry
+                            (file+olp org-default-notes-file "项目" "工作")
+                            "* TODO %<%Y-%m-%d %H:%M:%S> %?\n"
+                            :empty-lines 1)
+                           ("l" "Life 生活" entry
+                            (file+olp org-default-notes-file "项目" "生活")
+                            "* TODO %<%Y-%m-%d %H:%M:%S> %?\n"
+                            :empty-lines 1)
                            ("n" "Note 笔记" entry
                             (file+headline org-default-notes-file "笔记")
                             "* %<%Y-%m-%d %H:%M:%S> %?\n"

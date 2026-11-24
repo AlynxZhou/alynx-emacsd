@@ -78,6 +78,10 @@
   (scroll-conservatively 101)
   (scroll-preserve-screen-position t)
   (auto-window-vscroll nil)
+  ;; Scaling text decorations supported in Emacs 32.
+  (underline-line-scaling-flag t)
+  (overline-line-scaling-flag t)
+  (strike-through-line-scaling-flag t)
   ;; Decrease scrolling CPU usage.
   (fast-but-imprecise-scrolling t)
   (redisplay-skip-fontification-on-input t)

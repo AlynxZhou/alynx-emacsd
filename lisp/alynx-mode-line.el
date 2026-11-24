@@ -276,27 +276,42 @@ order provided)."
       formatted-mode-line
     (propertize formatted-mode-line 'face 'mode-line-inactive)))
 
+(defun alynx-mode-line--render (segment)
+  "Render mode line SEGMENT and calculate its pixel width."
+  (let ((text (alynx-mode-line--propertize (format-mode-line segment))))
+    (cons text (string-pixel-width text))))
+
 ;; See <https://www.gnu.org/software/emacs/manual/html_node/elisp/Pixel-Specification.html>.
 (defun alynx-mode-line--align (left right)
-  "Align a mode line with LEFT and RIGHT parts.
+  "Align LEFT and RIGHT, dropping rightmost segments when needed."
+  (let* ((left-segments (reverse (mapcar #'alynx-mode-line--render left)))
+         (right-segments (reverse (mapcar #'alynx-mode-line--render right)))
+         (marker (propertize " " 'face 'alynx-mode-line-face-window-selected))
+         (marker-width (string-pixel-width marker))
+         (budget (- (window-pixel-width) (* 2 marker-width)))
+         (content-width (+ (apply #'+ (mapcar #'cdr left-segments))
+                           (apply #'+ (mapcar #'cdr right-segments)))))
 
-The mode line should fit the `window-width' with space between."
-  ;; Calling `format-mode-line` here is needed because we can only align after
-  ;; knowing the final string length.
-  (let* ((formatted-left (format-mode-line left))
-         (formatted-right (format-mode-line right))
-         (right-length (length formatted-right)))
-    ;; We don't need to check selected here, we do it later for the whole line.
-    (concat (propertize " " 'face 'alynx-mode-line-face-window-selected)
-            formatted-left
-            ;; Don't forget to subtract 1 more, because we have a right space!
-            (propertize " "
-                        'display `((space :align-to (- (+ right right-fringe
-                                                          right-margin
-                                                          scroll-bar)
-                                                       ,right-length 1))))
-            formatted-right
-            (propertize " " 'face 'alynx-mode-line-face-window-selected))))
+    ;; Remove RIGHT segments first, then LEFT segments.
+    (while (> content-width budget)
+      (let ((removed (pop (if right-segments right-segments left-segments))))
+        (setq content-width (- content-width (cdr removed)))))
+
+    (let* ((formatted-left (mapconcat #'car (nreverse left-segments) ""))
+           (formatted-right (mapconcat #'car (nreverse right-segments) ""))
+           (align (+ (string-pixel-width formatted-right) marker-width)))
+         (concat
+          marker
+          formatted-left
+          (propertize " " 'display
+                      ;; This does not match window width, why?
+                      ;; `(space :width (,(- budget content-width)))
+                      `((space :align-to (- (+ right right-fringe
+                                               right-margin
+                                               scroll-bar)
+                                            (,align)))))
+          formatted-right
+          marker))))
 
 (declare-function popper-popup-p "popper" (buf))
 
@@ -636,23 +651,22 @@ Checkers checked, in order: `flycheck', `flymake'."
 
   (setq-default mode-line-format
                 '((:eval
-                   (alynx-mode-line--propertize
-                    (alynx-mode-line--align
-                     ;; Left.
-                     '((:eval (alynx-mode-line--segment-buffer-status))
-                       (:eval (alynx-mode-line--segment-buffer-name))
-                       (:eval (alynx-mode-line--segment-cursor-position)))
-                     ;; Right.
-                     '((:eval (alynx-mode-line--segment-word-count))
-                       (:eval (alynx-mode-line--segment-indentation-style))
-                       (:eval (alynx-mode-line--segment-eol-type))
-                       (:eval (alynx-mode-line--segment-encoding))
-                       (:eval (alynx-mode-line--segment-major-mode))
-                       (:eval (alynx-mode-line--segment-vc))
-                       (:eval (alynx-mode-line--segment-checker))
-                       (:eval (alynx-mode-line--segment-keybinding))
-                       (:eval (alynx-mode-line--segment-process))
-                       (:eval (alynx-mode-line--segment-misc-info)))))))))
+                   (alynx-mode-line--align
+                    ;; Left.
+                    '((:eval (alynx-mode-line--segment-buffer-status))
+                      (:eval (alynx-mode-line--segment-buffer-name))
+                      (:eval (alynx-mode-line--segment-cursor-position)))
+                    ;; Right.
+                    '((:eval (alynx-mode-line--segment-word-count))
+                      (:eval (alynx-mode-line--segment-indentation-style))
+                      (:eval (alynx-mode-line--segment-eol-type))
+                      (:eval (alynx-mode-line--segment-encoding))
+                      (:eval (alynx-mode-line--segment-major-mode))
+                      (:eval (alynx-mode-line--segment-vc))
+                      (:eval (alynx-mode-line--segment-checker))
+                      (:eval (alynx-mode-line--segment-keybinding))
+                      (:eval (alynx-mode-line--segment-process))
+                      (:eval (alynx-mode-line--segment-misc-info))))))))
 
 (defun alynx-mode-line--deactivate ()
   "Deactivate alynx-mode-line."

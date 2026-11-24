@@ -103,11 +103,11 @@
    `(font-lock-negation-char-face ((t (:foreground ,cyan :bold t))))
 
    ;; Mode line.
-   `(mode-line ((t (:background ,level-3-color :foreground ,ui-fg :box (:color ,border :line-width 1)))))
+   `(mode-line ((t (:background ,level-3-color :foreground ,ui-fg :box (:color ,border :line-width (-1 . -1))))))
    `(mode-line-buffer-id ((t (:weight bold))))
    `(mode-line-emphasis ((t (:weight bold))))
    ;; `mono-3` is good for both dark and light.
-   `(mode-line-inactive ((t (:background ,border :foreground ,mono-3 :box (:color ,border :line-width 1)))))
+   `(mode-line-inactive ((t (:background ,border :foreground ,mono-3 :box (:color ,border :line-width (-1 . -1))))))
 
    ;; Window divider.
    `(window-divider ((t (:foreground ,border))))
@@ -357,7 +357,7 @@
    `(holiday ((t (:foreground ,green))))
 
    ;; `ruler-mode`
-   `(ruler-mode-default ((t (:background ,level-3-color :foreground ,ui-fg :box (:color ,border :line-width 1)))))
+   `(ruler-mode-default ((t (:background ,level-3-color :foreground ,ui-fg :box (:color ,border :line-width (-1 . -1))))))
    `(ruler-mode-column-number ((t (:inherit (ruler-mode-default)))))
    `(ruler-mode-comment-column ((t (:inherit (ruler-mode-default):foreground ,red-1))))
    ;; Because cursor is always in current column so accent is OK here.

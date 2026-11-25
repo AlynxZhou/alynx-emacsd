@@ -144,6 +144,19 @@
 ;;   (sis-ism-lazyman-config "xkb:us::eng" "rime" 'ibus)
 ;;   (sis-global-respect-mode t))
 
+;; Dependency of `lsp-bridge`.
+(use-package yasnippet
+  :ensure t
+  :hook ((prog-mode . yas-minor-mode))
+  :config
+  ;; OK, I finally give up, maybe I need to sync snippets so don't exclude them.
+  (make-directory (locate-user-emacs-file "snippets/") t))
+
+;; Dependency of `lsp-bridge`.
+(use-package yasnippet-snippets
+  :ensure t
+  :defer t)
+
 (provide 'alynx/packages-editing)
 
 ;;; packages-editing.el ends here.

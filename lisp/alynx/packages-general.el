@@ -199,7 +199,7 @@
   (ls-lisp-dirs-first t))
 
 (use-package dired
-  :defer t
+  :hook ((dired-mode . diff-hl-dired-mode))
   :custom
   (dired-dwim-target t)
   (dired-listing-switches "-alh --group-directories-first"))
@@ -268,20 +268,6 @@
 ;;   :ensure t
 ;;   :disabled t
 ;;   :defer 1)
-
-;; Dependency of `vertico-posframe` and `flycheck-posframe`.
-;; (use-package posframe
-;;   :ensure t
-;;   :defer t)
-
-;; Magit and `gptel` uses this, and we need to redirect its files.
-(use-package transient
-  :ensure t
-  :defer t
-  :custom
-  (transient-history-file (locate-user-emacs-file ".local/transient/history.el"))
-  (transient-levels-file (locate-user-emacs-file ".local/transient/levels.el"))
-  (transient-values-file (locate-user-emacs-file ".local/transient/values.el")))
 
 (provide 'alynx/packages-general)
 

@@ -9,19 +9,6 @@
 
 ;; Not every one loves `lsp-bridge`, but it works well for me.
 
-;; Dependency of `lsp-bridge`.
-(use-package yasnippet
-  :ensure t
-  :hook ((prog-mode . yas-minor-mode))
-  :config
-  ;; OK, I finally give up, maybe I need to sync snippets so don't exclude them.
-  (make-directory (locate-user-emacs-file "snippets/") t))
-
-;; Dependency of `lsp-bridge`.
-(use-package yasnippet-snippets
-  :ensure t
-  :defer t)
-
 ;; Looks like that I need to alter JSON files under `langserver` to add
 ;; parameters to `clangd`, but I can also modify `~/.config/clangd/config.yaml`
 ;; to let it find `compile_commands.json` under `build/`.

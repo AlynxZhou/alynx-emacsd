@@ -173,8 +173,13 @@
 ;; Don't defer themes, I need them all time.
 
 (use-package alynx-one-themes
+  :load-path "lisp/alynx-one-themes"
   :config
-  (load-theme 'alynx-one-dark t))
+  ;; Load two variants without enabling them, so we can toggle between them.
+  (load-theme 'alynx-one-dark t t)
+  (load-theme 'alynx-one-light t t)
+  ;; Manually enable one variant at first.
+  (enable-theme 'alynx-one-dark))
 
 ;; Or if you like `nano-theme`.
 ;; (use-package nano-theme

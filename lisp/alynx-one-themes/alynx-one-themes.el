@@ -19,76 +19,6 @@
 
 ;;; Code:
 
-(defconst alynx-one--dark-colors
-  '(:accent "#528BFF"
-            :fg "#ABB2BF"
-            :bg "#282C34"
-            :bg-1 "#121417"
-            :bg-hl "#2C323C"
-            :selection "#3E4451"
-            :ui-fg "#9DA5B4"
-            :level-3-color "#21252B"
-            :border "#181A1F"
-            :gutter "#4B5363"
-            :guide "#3C4049"
-            :insert "#43D08A"
-            :change "#E0C285"
-            :delete "#E05252"
-            :info "#6494ED"
-            :success "#73C900"
-            :warning "#E2C08D"
-            :error "#FF6347"
-            :mono-1 "#ABB2BF"
-            :mono-2 "#828997"
-            :mono-3 "#5C6370"
-            :cyan "#56B6C2"
-            :blue "#61AFEF"
-            :purple "#C678DD"
-            :green "#98C379"
-            :red-1 "#E06C75"
-            :red-2 "#BE5046"
-            :orange-1 "#D19A66"
-            :orange-2 "#E5C07B"
-            :gray "#3E4451"
-            :silver "#9DA5B4"
-            :black "#21252B")
-  "Dark variant colors of Alynx One themes.")
-
-(defconst alynx-one--light-colors
-  '(:accent "#526EFF"
-            :fg "#383A42"
-            :bg "#FAFAFA"
-            :bg-1 "#E5E5E6"
-            :bg-hl "#F0F0F1"
-            :selection "#E5E5E6"
-            :ui-fg "#424243"
-            :level-3-color "#EAEAEB"
-            :border "#DBDBDC"
-            :gutter "#C2C2C3"
-            :guide "#D3D3D5"
-            :insert "#2DB448"
-            :change "#F2A60D"
-            :delete "#FF1414"
-            :info "#1492FF"
-            :success "#2DB448"
-            :warning "#D5880B"
-            :error "#F42A2A"
-            :mono-1 "#383A42"
-            :mono-2 "#696C77"
-            :mono-3 "#A0A1A7"
-            :cyan "#0184BC"
-            :blue "#4078F2"
-            :purple "#A626A4"
-            :green "#50A14F"
-            :red-1 "#E45649"
-            :red-2 "#CA1243"
-            :orange-1 "#B76B01"
-            :orange-2 "#CB7701"
-            :gray "#E5E5E6"
-            :silver "#EAEAEB"
-            :black "#424243")
-  "Light variant colors of Alynx One themes.")
-
 (defun alynx-one--set-faces (theme colors)
   "Set faces of THEME using COLORS."
   (let ((accent (plist-get colors :accent))
@@ -445,21 +375,18 @@
      `(tab-bar-tab          ((t (:background ,bg :foreground ,purple))))
      `(tab-bar              ((t (:background ,level-3-color)))))))
 
-(deftheme alynx-one-dark
-  "Alynx One Dark - Alynx's Emacs port of the Atom One Dark theme."
-  :family 'alynx-one
-  :kind 'color-scheme
-  :background-mode 'dark)
-(alynx-one--set-faces 'alynx-one-dark alynx-one--dark-colors)
-(provide-theme 'alynx-one-dark)
+;; Emacs assumes each theme has its own file, and will check whether theme file
+;; is in `(custom-available-themes)` before enabling it. To make `toggle-theme`
+;; work, we have to put variants into different files, and load those files
+;; independently, instead of merge them into one file.
 
-(deftheme alynx-one-light
-  "Alynx One Light - Alynx's Emacs port of the Atom One Light theme."
-  :family 'alynx-one
-  :kind 'color-scheme
-  :background-mode 'light)
-(alynx-one--set-faces 'alynx-one-light alynx-one--light-colors)
-(provide-theme 'alynx-one-light)
+;; Automatically add package directory to theme load path, otherwise Emacs cannot
+;; load themes in this directory.
+;;;###autoload
+(and load-file-name
+     (boundp 'custom-theme-load-path)
+     (add-to-list 'custom-theme-load-path
+                  (file-name-as-directory (file-name-directory load-file-name))))
 
 (provide 'alynx-one-themes)
 

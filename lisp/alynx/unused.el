@@ -238,6 +238,18 @@
 ;; window is not selected (doc says you can pass `t` but you will get errors),
 ;; `mode-line-window-selected-p` is useful to this.
 
+;; `custom-theme-directory` and `custom-theme-load-path` only works when file
+;; name is the same as theme name, however, I define two variants of themes in
+;; one file, so this is useless.
+
+;; Automatically add this theme to the load path.
+;;;###autoload
+;; (and load-file-name
+;;      (boundp 'custom-theme-load-path)
+;;      (add-to-list 'custom-theme-load-path
+;;                   (file-name-as-directory
+;;                    (file-name-directory load-file-name))))
+
 (provide 'alynx/unused)
 
 ;;; unused.el ends here.

@@ -172,12 +172,9 @@
 ;;
 ;; Don't defer themes, I need them all time.
 
-(use-package alynx-one-dark-theme
+(use-package alynx-one-themes
   :config
   (load-theme 'alynx-one-dark t))
-
-;; Or sometimes I want light theme.
-(use-package alynx-one-light-theme)
 
 ;; Or if you like `nano-theme`.
 ;; (use-package nano-theme

@@ -152,7 +152,7 @@ in order.")
 (defun set-indent-offset (num)
   "Set indent offset to NUM chars.
 If NUM is negative, indent offset will be nil."
-  (interactive `(,(read-number "Indent offset (chars): ")))
+  (interactive `(,(read-number "Indent offset (chars): " 8)))
   (dolist (mode-indent-offset (alynx/get-mode-indent-offsets))
     ;; We change the actual offset variable, so use `set` instead of `setq` here.
     ;; `setq` sets buffer-local value automatically, but we need to do this
@@ -165,14 +165,14 @@ If NUM is negative, indent offset will be nil."
 (defun indent-tabs (num)
   "Mark this buffer to indent with tabs and set indent offset to NUM chars.
 If NUM is negative, indent offset will be nil."
-  (interactive `(,(read-number "Indent offset (chars): ")))
+  (interactive `(,(read-number "Indent offset (chars): " 8)))
   (indent-tabs-mode 1)
   (set-indent-offset num))
 
 (defun indent-spaces (num)
   "Mark this buffer to indent with spaces and set indent offset to NUM chars.
 If NUM is negative, indent offset will be nil."
-  (interactive `(,(read-number "Indent offset (chars): ")))
+  (interactive `(,(read-number "Indent offset (chars): " 8)))
   (indent-tabs-mode -1)
   (set-indent-offset num))
 
@@ -191,10 +191,9 @@ If NUM is negative, indent offset will be nil."
 ;; call this via `M-x` manually. I personally think they should use 2 spaces.
 (defun set-tab-width (num)
   "Mark this buffer to set tab width to NUM chars."
-  (interactive `(,(read-number "Tab width (chars): " tab-width)))
+  (interactive `(,(read-number "Tab width (chars): " 8)))
   (setq num (max num 0))
-  (when (/= tab-width num)
-    (setq tab-width num)))
+  (setq tab-width num))
 
 (defconst alynx/skip-guess-indent-modes '(lisp-mode
                                           emacs-lisp-mode

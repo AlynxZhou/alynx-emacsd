@@ -11,11 +11,7 @@
 ;; config that does not belong to any package and you want to manage them with
 ;; `use-package`.
 (use-package emacs
-  :hook ((minibuffer-setup . cursor-intangible-mode)
-         ;; Highlight trailing whitespace in `prog-mode` only.
-         (prog-mode . (lambda () (setq show-trailing-whitespace t)))
-         (nxml-mode . (lambda () (setq show-trailing-whitespace t)))
-         (yaml-ts-mode . (lambda () (setq show-trailing-whitespace t))))
+  :hook ((minibuffer-setup . cursor-intangible-mode))
   ;; Some files does not have a major mode, and I don't want to define a major
   ;; mode for it, so just use `lambda` for them.
   ;;
@@ -99,6 +95,7 @@
   ;; See <https://emacs-china.org/t/emacs/21053/14>.
   (process-adaptive-read-buffering nil)
   (fill-column 80)
+  (show-trailing-whitespace t)
   (display-raw-bytes-as-hex t)
   (sentence-end-double-space nil)
   ;; Don't show default indicators, they are useless and ugly.

@@ -40,8 +40,7 @@
   (interactive `(,(read-number "Fill column indicator (chars): " 80)))
   (setq display-fill-column-indicator-column (+ 1 num))
   (setq fill-column num)
-  (display-fill-column-indicator-mode 1)
-  (setq show-trailing-whitespace t))
+  (display-fill-column-indicator-mode 1))
 
 (provide 'alynx/appearance)
 

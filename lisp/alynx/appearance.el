@@ -35,6 +35,14 @@
         (modify-all-frames-parameters `((ns-appearance . ,appearance))))))
   (add-hook 'enable-theme-functions 'alynx/sync-ns-appearance))
 
+(defun alynx/set-fill-column-indicator (num)
+  "Set `fill-column-indicator' to NUM chars."
+  (interactive `(,(read-number "Fill column indicator (chars): " 80)))
+  (setq display-fill-column-indicator-column (+ 1 num))
+  (setq fill-column num)
+  (display-fill-column-indicator-mode 1)
+  (setq show-trailing-whitespace t))
+
 (provide 'alynx/appearance)
 
 ;;; appearance.el ends here.

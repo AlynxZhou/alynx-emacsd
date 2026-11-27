@@ -9,8 +9,11 @@
 
 (use-package magit
   :ensure t
+  ;; Load Magit as soon as possible, so it will process all Git related buffers.
+  :defer 1
   :bind (("C-x g" . magit-status))
-  :hook ((magit-mode . (lambda () (toggle-truncate-lines -1))))
+  :hook ((magit-mode . (lambda () (toggle-truncate-lines -1)))
+         (git-commit-setup . (lambda () (alynx/set-fill-column-indicator 72))))
   :custom
   ;; Without line numbers, fringe is too small to see.
   (magit-section-disable-line-numbers nil))

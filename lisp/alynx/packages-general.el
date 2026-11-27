@@ -17,24 +17,19 @@
          (nxml-mode . (lambda () (setq show-trailing-whitespace t)))
          (yaml-ts-mode . (lambda () (setq show-trailing-whitespace t))))
   ;; Some files does not have a major mode, and I don't want to define a major
-  ;; mode for it, so just use some `lambda` for them.
+  ;; mode for it, so just use `lambda` for them.
   ;;
   ;; NOTE: `auto-mode-alist` can only run a function for each regex, so just
   ;; add all needed settings here.
+  ;;
+  ;; When Magit is used, `COMMIT_EDITMSG` is handled by `git-commit-mode`.
   :mode (("COMMIT_EDITMSG\\'" . (lambda ()
-                                  (display-fill-column-indicator-mode 1)
-                                  (setq display-fill-column-indicator-column (+ 1 72))
-                                  (setq show-trailing-whitespace t)))
+                                  (alynx/set-fill-column-indicator 72)))
          ;; It's a little bit strange that SUSE use 66 in changes files.
-         ("\\.changes\\'" . (lambda ()
-                              (display-fill-column-indicator-mode 1)
-                              (setq display-fill-column-indicator-column (+ 1 66))
-                              (setq show-trailing-whitespace t)))
+         ("\\.changes\\'" . (lambda () (alynx/set-fill-column-indicator 66)))
          ;; `osc` generate temp files for `vc`.
          ("\\.changes\\.vctmp\\." . (lambda ()
-                                      (display-fill-column-indicator-mode 1)
-                                      (setq display-fill-column-indicator-column (+ 1 66))
-                                      (setq show-trailing-whitespace t))))
+                                      (alynx/set-fill-column-indicator 66))))
   ;; Vertico requires those.
   :config
   ;; Contrary to what many Emacs users have in their configs, you only need this

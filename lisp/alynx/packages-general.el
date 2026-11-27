@@ -19,13 +19,11 @@
   ;; add all needed settings here.
   ;;
   ;; When Magit is used, `COMMIT_EDITMSG` is handled by `git-commit-mode`.
-  :mode (("COMMIT_EDITMSG\\'" . (lambda ()
-                                  (alynx/set-fill-column-indicator 72)))
+  :mode (("COMMIT_EDITMSG\\'" . (lambda () (set-fill-column-indicator 72)))
          ;; It's a little bit strange that SUSE use 66 in changes files.
-         ("\\.changes\\'" . (lambda () (alynx/set-fill-column-indicator 66)))
+         ("\\.changes\\'" . (lambda () (set-fill-column-indicator 66)))
          ;; `osc` generate temp files for `vc`.
-         ("\\.changes\\.vctmp\\." . (lambda ()
-                                      (alynx/set-fill-column-indicator 66))))
+         ("\\.changes\\.vctmp\\." . (lambda () (set-fill-column-indicator 66))))
   :config
   ;; Contrary to what many Emacs users have in their configs, you only need this
   ;; to make UTF-8 the default coding system.

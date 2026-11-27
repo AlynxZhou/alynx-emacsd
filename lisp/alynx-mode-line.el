@@ -265,37 +265,8 @@ order provided)."
            ,@sequences
            alynx-mode-line-segment-separator))
 
-;; Instead of the complex 3th argument of `format-mode-line`, this is a simple
-;; way to make mode line of unselected window inactive.
-;;
-;; If you are really interested in how `format-mode-line` handles faces, see
-;; <../unused.el#L143-L178>.
-(defun alynx-mode-line--propertize (formatted-mode-line)
-  "Propertize FORMATTED-MODE-LINE with inactive face if not selected."
-  ;; NOTE: Don't call `format-mode-line` here, we already called before align,
-  ;; and call it twice will re-escape `%`.
-  (if (mode-line-window-selected-p)
-      formatted-mode-line
-    (propertize formatted-mode-line 'face 'mode-line-inactive)))
-
-;; See <https://www.gnu.org/software/emacs/manual/html_node/elisp/Pixel-Specification.html>.
-(defun alynx-mode-line--align (left right)
-  "Align a mode line with LEFT and RIGHT parts.
-
-The mode line should fit the `window-width' with space between."
-  ;; Calling `format-mode-line` here is needed because we can only align after
-  ;; knowing the final string length.
-  (let* ((formatted-left (format-mode-line left))
-         (formatted-right (format-mode-line right))
-         (align (string-width formatted-right)))
-    ;; We don't need to check selected here, we do it later for the whole line.
-    (concat formatted-left
-            (propertize " "
-                        'display `((space :align-to (- (+ right right-fringe
-                                                          right-margin
-                                                          scroll-bar)
-                                                       ,align))))
-            formatted-right)))
+;; NOTE: Each segments should return the final plain string, that means if you
+;; have `%` to parse, you must call `format-mode-line` explicitly inside segment.
 
 (declare-function popper-popup-p "popper" (buf))
 
@@ -336,7 +307,7 @@ The mode line should fit the `window-width' with space between."
   "Display the position of the cursor in the current buffer."
   (when alynx-mode-line-show-cursor-position
     (alynx-mode-line--concat-with-separator
-     "%l:%c" " " (number-to-string (point)) " " "%p%%")))
+     (format-mode-line (concat "%l:%c " (number-to-string (point)) " %p")))))
 
 (defun alynx-mode-line--segment-word-count ()
   "Display the number of words in the current buffer or region in text mode."
@@ -596,8 +567,6 @@ Checkers checked, in order: `flycheck', `flymake'."
     (unless (string-blank-p misc-info)
       (alynx-mode-line--concat-with-separator (string-trim misc-info)))))
 
-(defvar-local alynx-mode-line--original-mode-line mode-line-format)
-
 ;; `eval-expression` uses `eldoc-minibuffer-message` to display function headers
 ;; on mode line (because minibuffer is used to input), but the function has
 ;; problems, it addes a segment to selected buffer or lowest buffer, but cannot
@@ -612,6 +581,78 @@ Checkers checked, in order: `flycheck', `flymake'."
   "Display message specified by FORMAT-STRING and ARGS if not in minibuffer."
   (unless (minibufferp)
     (apply #'message format-string args)))
+
+(defvar alynx-mode-line--original mode-line-format
+  "Backup of the original mode line.")
+
+;; Instead of the complex 3th argument of `format-mode-line`, this is a simple
+;; way to make mode line of unselected window inactive.
+;;
+;; If you are really interested in how `format-mode-line` handles faces, see
+;; <./alynx/unused.el#L204-L239>.
+(defun alynx-mode-line--propertize (formatted-mode-line)
+  "Propertize FORMATTED-MODE-LINE with inactive face if not selected."
+  ;; NOTE: Don't call `format-mode-line` here, we already called before alignment
+  ;; in each segments, otherwise it will parse `%` twice.
+  (if (mode-line-window-selected-p)
+      formatted-mode-line
+    (propertize formatted-mode-line 'face 'mode-line-inactive)))
+
+;; See <https://www.gnu.org/software/emacs/manual/html_node/elisp/Pixel-Specification.html>.
+(defun alynx-mode-line--align (left right)
+  "Align a mode line with LEFT and RIGHT parts.
+
+The mode line should fit the `window-width' with space between."
+  ;; NOTE: Calling `format-mode-line` in each segments before alignment is needed
+  ;; because we can only align after knowing the final string length.
+  ;;
+  ;; We don't need to check selected here, we do it later for the whole line.
+  (concat left
+          (propertize " "
+                      'display `((space :align-to (- (+ right right-fringe
+                                                        right-margin
+                                                        scroll-bar)
+                                                     ,(string-width right)))))
+          right))
+
+;; By default, Emacs parses `mode-line-format` implicitly, which is hard to
+;; control, because it has a lot of different rules and you never know whether
+;; your segments will be parsed twice.
+;;
+;; For example, if you give a string as `mode-line-format`, Emacs will call
+;; `format-mode-line` to parse the string, however, due to alignment, we already
+;; called `format-mode-line` in each segments.
+;;
+;; To prevent this, we explicitly parse each segments, and save them in a symbol,
+;; then only give Emacs the symbol as `mode-line-format`. This makes use of
+;; another rule that if `mode-line-format` is a symbol for string, Emacs will
+;; only display the string instead of parsing it.
+(defvar-local alynx-mode-line--formatted nil
+  "Formatted mode line.")
+;; Preserve faces and properties for `alynx-mode-line--formatted`.
+(put 'alynx-mode-line--formatted 'risky-local-variable t)
+(defun alynx-mode-line--format ()
+  "Update `alynx-mode-line--formatted' and return its symbol."
+  (setq alynx-mode-line--formatted
+        (alynx-mode-line--propertize
+         (alynx-mode-line--align
+          ;; Left.
+          (concat (alynx-mode-line--segment-buffer-status)
+                  (alynx-mode-line--segment-buffer-name)
+                  (alynx-mode-line--segment-cursor-position))
+          ;; Right.
+          (concat (alynx-mode-line--segment-word-count)
+                  (alynx-mode-line--segment-indentation-style)
+                  (alynx-mode-line--segment-eol-type)
+                  (alynx-mode-line--segment-encoding)
+                  (alynx-mode-line--segment-major-mode)
+                  (alynx-mode-line--segment-vc)
+                  (alynx-mode-line--segment-checker)
+                  (alynx-mode-line--segment-keybinding)
+                  (alynx-mode-line--segment-process)
+                  (alynx-mode-line--segment-misc-info)))))
+  ;; HACK: Return the symbol, not the string.
+  'alynx-mode-line--formatted)
 
 (defun alynx-mode-line--activate ()
   "Activate alynx-mode-line."
@@ -638,27 +679,11 @@ Checkers checked, in order: `flycheck', `flymake'."
 
   ;; Save previous value of `mode-line-format`, it's a buffer-local variable and
   ;; we only save global value here.
-  (setq alynx-mode-line--original-mode-line (default-value 'mode-line-format))
+  (setq alynx-mode-line--original (default-value 'mode-line-format))
 
-  (setq-default mode-line-format
-                '((:eval
-                   (alynx-mode-line--propertize
-                    (alynx-mode-line--align
-                     ;; Left.
-                     '((:eval (alynx-mode-line--segment-buffer-status))
-                       (:eval (alynx-mode-line--segment-buffer-name))
-                       (:eval (alynx-mode-line--segment-cursor-position)))
-                     ;; Right.
-                     '((:eval (alynx-mode-line--segment-word-count))
-                       (:eval (alynx-mode-line--segment-indentation-style))
-                       (:eval (alynx-mode-line--segment-eol-type))
-                       (:eval (alynx-mode-line--segment-encoding))
-                       (:eval (alynx-mode-line--segment-major-mode))
-                       (:eval (alynx-mode-line--segment-vc))
-                       (:eval (alynx-mode-line--segment-checker))
-                       (:eval (alynx-mode-line--segment-keybinding))
-                       (:eval (alynx-mode-line--segment-process))
-                       (:eval (alynx-mode-line--segment-misc-info)))))))))
+  ;; NOTE: Keep the outside list, just in case some third-party packages insert
+  ;; elements to mode line directly.
+  (setq-default mode-line-format '((:eval (alynx-mode-line--format)))))
 
 (defun alynx-mode-line--deactivate ()
   "Deactivate alynx-mode-line."
@@ -685,7 +710,7 @@ Checkers checked, in order: `flycheck', `flymake'."
 
   ;; Restore the original value of `mode-line-format`, we still only handle
   ;; global value.
-  (setq-default mode-line-format alynx-mode-line--original-mode-line))
+  (setq-default mode-line-format alynx-mode-line--original))
 
 ;;;###autoload
 (define-minor-mode alynx-mode-line-mode

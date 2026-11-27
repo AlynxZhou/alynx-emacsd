@@ -55,6 +55,10 @@
 
 (use-package mouse
   :defer t
+  :config
+  ;; Enable context menu. `vertico-multiform-mode` adds a menu in the minibuffer
+  ;; to switch display modes.
+  (context-menu-mode 1)
   :custom
   ;; Yank to cursor, not where mouse clicked.
   (mouse-yank-at-point t))

@@ -30,7 +30,6 @@
          ;; `osc` generate temp files for `vc`.
          ("\\.changes\\.vctmp\\." . (lambda ()
                                       (alynx/set-fill-column-indicator 66))))
-  ;; Vertico requires those.
   :config
   ;; Contrary to what many Emacs users have in their configs, you only need this
   ;; to make UTF-8 the default coding system.
@@ -51,7 +50,8 @@
   ;; Disable startup buffer. It's OK but it's not beautiful and not helpful.
   (inhibit-startup-screen t)
   ;; (fancy-splash-image (locate-user-emacs-file "emacs-e.svg"))
-  (initial-scratch-message ";; -*- lexical-binding: t; -*-\n;; Happy hacking here!\n")
+  (initial-scratch-message
+   ";; -*- lexical-binding: t; -*-\n;; Happy hacking here!\n")
   ;; Disable annoying bell.
   (ring-bell-function 'ignore)
   ;; (visible-bell nil)
@@ -81,10 +81,15 @@
   (fast-but-imprecise-scrolling t)
   (redisplay-skip-fontification-on-input t)
   (jit-lock-defer-time 0)
-  (minibuffer-prompt-properties
-   '(read-only t cursor-intangible t face minibuffer-prompt))
+  ;; Vertico requires those.
   ;; Enable recursive minibuffers.
   (enable-recursive-minibuffers t)
+  ;; Hide commands in `M-x` which do not work in the current mode. Vertico
+  ;; commands are hidden in normal buffers.
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  ;; Do not allow the cursor in the minibuffer prompt.
+  (minibuffer-prompt-properties
+   '(read-only t cursor-intangible t face minibuffer-prompt))
   ;; Move autosave files and list into backup dir.
   (auto-save-list-file-prefix (locate-user-emacs-file ".local/backup/.saves-"))
   ;; Prevent `.#` lock files, so we won't mess up project if crashed.

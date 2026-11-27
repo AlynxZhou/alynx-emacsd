@@ -134,11 +134,18 @@
          ("C-x C--" . global-text-scale-adjust)
          ("C-x C-0" . global-text-scale-adjust)))
 
-;; Highlight Markdown-style `inline code block` in comments.
+;; Highlight Markdown-style `inline code blocks` and
+;; [links](https://example.com/) (or <https://example.com/>) in comments.
 ;;
 ;; Emacs prefer `this', I prefer `that`.
 (use-package font-lock
   :config
+  (defface font-lock-comment-link-face
+    '((t (:inherit (font-lock-comment-face) :underline t)))
+    "Face of links in comments.")
+  (defface font-lock-comment-code-face
+    '((t (:inherit (font-lock-comment-face))))
+    "Face of inline code blocks in comments.")
   ;; Tree-sitter modes works differently, so don't add them here.
   (dolist (mode '(emacs-lisp-mode
                   lisp-interaction-mode
@@ -154,11 +161,25 @@
                   rpm-spec-mode))
     (font-lock-add-keywords
      mode
-     '(("`\\([^`'\n]+\\)`"
-        ;; `4` means comments only and `8` means comments and strings, use `4`
-        ;; here because JavaScript template string also uses backquote.
+     ;; `4` means comments only and `8` means comments and strings.
+     '(;; Links like <https://example.com/>.
+       ("<\\([a-zA-Z][a-zA-Z0-9+.-]+://[^ \t\n<>]+\\)>"
         (1 (when (save-excursion (nth 4 (syntax-ppss (match-beginning 0))))
-             'font-lock-constant-face)
+             'font-lock-comment-link-face)
+           prepend))
+       ;; Links like [text](https://example.com/).
+       ("\\[\\([^]\n]+\\)\\](\\(\\(?:[^() \t\n]+\\|([^() \t\n]+)\\)+\\))"
+        (1 (when (save-excursion (nth 4 (syntax-ppss (match-beginning 0))))
+             'font-lock-comment-link-face)
+           prepend)
+        (2 (when (save-excursion (nth 4 (syntax-ppss (match-beginning 0))))
+             'font-lock-comment-link-face)
+           prepend))
+       ;; Inline code blocks like `code`.
+       ("`\\([^`'\n]+\\)`"
+        ;; Use `4` here because JavaScript template string also uses backquote.
+        (1 (when (save-excursion (nth 4 (syntax-ppss (match-beginning 0))))
+             'font-lock-comment-code-face)
            prepend)))
      'append)))
 

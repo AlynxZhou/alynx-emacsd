@@ -80,7 +80,6 @@
      `(header-line ((t (:background ,level-3-color))))
      `(vertical-border ((t (:background ,border :foreground ,border))))
      `(secondary-selection ((t (:background ,bg-1))))
-     `(query-replace ((t (:inherit (isearch)))))
      `(minibuffer-prompt ((t (:foreground ,ui-fg))))
      `(tooltip ((t (:inherit (variable-pitch) :foreground ,fg :background ,bg-1))))
 
@@ -98,6 +97,9 @@
      `(font-lock-variable-name-face ((t (:foreground ,red-1))))
      `(font-lock-warning-face ((t (:foreground ,mono-3 :bold t))))
      `(font-lock-negation-char-face ((t (:foreground ,cyan :bold t))))
+     ;; My custom faces to highlight elements in comments.
+     `(font-lock-comment-link-face ((t (:inherit (font-lock-comment-face) :foreground ,cyan :underline t))))
+     `(font-lock-comment-code-face ((t (:inherit (font-lock-comment-face) :foreground ,cyan))))
 
      ;; Mode line.
      `(mode-line ((t (:background ,level-3-color :foreground ,ui-fg :box (:color ,border :line-width (-1 . -1))))))
@@ -167,6 +169,7 @@
 
      ;; Replace.
      `(match ((t (:foreground ,bg :background ,orange-2))))
+     `(query-replace ((t (:inherit (isearch)))))
 
      ;; Consult.
      `(consult-line-number-prefix ((t (:inherit (line-number)))))

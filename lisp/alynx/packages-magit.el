@@ -7,6 +7,8 @@
 
 (require 'alynx/utils)
 
+(require 'alynx/appearance)
+
 (use-package magit
   :ensure t
   ;; Load Magit as soon as possible, so it will process all Git related buffers.

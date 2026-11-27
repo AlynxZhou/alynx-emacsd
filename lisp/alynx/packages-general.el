@@ -7,6 +7,8 @@
 
 (require 'alynx/utils)
 
+(require 'alynx/appearance)
+
 ;; There is actually no `emacs` package, but it is useful if you have some
 ;; config that does not belong to any package and you want to manage them with
 ;; `use-package`.

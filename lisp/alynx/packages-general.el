@@ -31,6 +31,8 @@
   ;; to make UTF-8 the default coding system.
   (set-language-environment "UTF-8")
   (put 'narrow-to-region 'disabled nil)
+  (put 'narrow-to-page 'disabled nil)
+  (put 'narrow-to-defun 'disabled nil)
   ;; Add prompt indicator to `completing-read-multiple`.
   ;;
   ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
